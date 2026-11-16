@@ -4,8 +4,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ibagué · Servicios de la ciudad</title>
-<meta name="description" content="Noticias del mundo, clima en vivo de Ibagué y acceso rápido a taxis, comercio local, turismo, hogar, domicilios y zona arcade.">
+<meta name="description" content="Noticias del mundo, clima en vivo de Ibagué y acceso rápido a taxis, comercio local, turismo, hogar, domicilios, entretenimiento y zona arcade.">
 <meta name="theme-color" content="#ffffff">
+
+<!-- Manifest PWA -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Meta etiquetas Open Graph (WhatsApp, Facebook, Telegram) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tolitecnoapp-glitch.github.io/IBAGUETQM/">
+<meta property="og:title" content="Ibagué · Servicios de la ciudad">
+<meta property="og:description" content="Noticias del mundo, clima en vivo de Ibagué y acceso rápido a taxis, comercio local, turismo, hogar, domicilios, entretenimiento y zona arcade.">
+<meta property="og:image" content="https://i.imgur.com/TwBpIWN.png">
+<meta property="og:image:secure_url" content="https://i.imgur.com/TwBpIWN.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="og:image:alt" content="Logotipo de Ibagué Servicios de la ciudad">
+<meta property="og:site_name" content="Ibagué · Servicios de la ciudad">
+<meta property="og:locale" content="es_CO">
+
+<!-- Meta etiquetas Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ibagué · Servicios de la ciudad">
+<meta name="twitter:description" content="Noticias del mundo, clima en vivo de Ibagué y acceso rápido a taxis, comercio local, turismo, hogar, domicilios, entretenimiento y zona arcade.">
+<meta name="twitter:image" content="https://i.imgur.com/TwBpIWN.png">
+
+<!-- Vista previa WhatsApp y motores de búsqueda -->
+<link rel="image_src" href="https://i.imgur.com/TwBpIWN.png">
+<meta itemprop="image" content="https://i.imgur.com/TwBpIWN.png">
+<meta itemprop="name" content="Ibagué · Servicios de la ciudad">
+<meta itemprop="description" content="Taxis seguros, comercio local, turismo, clima en vivo, hogar, domicilios, entretenimiento y zona arcade.">
+
+<!-- Soporte PWA en iOS y móviles -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ibagué TQM">
+<link rel="apple-touch-icon" href="https://i.imgur.com/TwBpIWN.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+
 <link rel="icon" href="https://i.imgur.com/TwBpIWN.png" referrerpolicy="no-referrer">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,31 +110,29 @@ img, svg, video { display: block; }
   box-shadow: 0 1px 0 rgba(16, 26, 48, .06), 0 10px 22px -14px rgba(16, 26, 48, .3);
 }
 .topbar__inner {
-  height: clamp(82px, 15vw, 112px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 4px clamp(8px, 2.5vw, 24px);
-  width: 100%; max-width: 680px;
+  height: 58px;
+  display: flex; align-items: center; justify-content: flex-start;
+  padding: 0 clamp(12px, 3.5vw, 24px);
+  width: 100%; max-width: 652px;
   margin: 0 auto;
 }
 .brand {
-  display: flex; align-items: center; justify-content: center;
-  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: flex-start;
+  height: 100%; width: auto;
 }
 .brand__logo {
-  height: calc(100% - 4px);
-  width: 100%;
-  max-width: 100%;
+  height: 56px; width: auto; max-width: min(85vw, 360px);
   object-fit: contain;
-  object-position: center;
+  object-position: left center;
   opacity: 0;
-  transform-origin: center center;
+  transform-origin: left center;
 }
 .brand__logo.is-in { animation: logoIn .8s cubic-bezier(.22, 1, .36, 1) .05s both; }
 
 @keyframes logoIn {
-  0%   { opacity: 0; transform: translateX(-40px) scale(.75); }
-  55%  { opacity: 1; transform: translateX(4px) scale(1.03); }
-  78%  { opacity: 1; transform: translateX(-1px) scale(.99); }
+  0%   { opacity: 0; transform: translateX(-80px) rotate(-16deg) scale(.5); }
+  55%  { opacity: 1; transform: translateX(8px) rotate(3deg) scale(1.06); }
+  78%  { opacity: 1; transform: translateX(-3px) rotate(-1deg) scale(.99); }
   100% { opacity: 1; transform: none; }
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -823,6 +860,134 @@ img, svg, video { display: block; }
 }
 
 /* ==========================================================
+   POPUP DE INSTALACIÓN PWA
+   ========================================================== */
+.pwa-overlay {
+  position: fixed; inset: 0; z-index: 150;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  background: rgba(9, 14, 26, .72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity .25s ease;
+  overscroll-behavior: contain;
+}
+.pwa-overlay.is-open { opacity: 1; }
+
+.pwa-modal {
+  position: relative;
+  width: 100%; max-width: 350px;
+  background: #fff;
+  color: var(--ink);
+  border-radius: 28px;
+  box-shadow: 0 24px 48px -12px rgba(16, 26, 48, .45);
+  overflow: hidden;
+  transform: translateY(20px) scale(.95);
+  transition: transform .28s cubic-bezier(.16, 1, .3, 1);
+  border: 1px solid rgba(16, 26, 48, .08);
+}
+.pwa-overlay.is-open .pwa-modal {
+  transform: translateY(0) scale(1);
+}
+
+.pwa-card {
+  display: flex; flex-direction: column;
+  padding: 24px 20px 20px;
+  text-align: center;
+}
+.pwa-header {
+  display: flex; justify-content: center;
+  margin-bottom: 12px;
+}
+.pwa-badge {
+  width: 100%; max-width: 220px;
+  height: 52px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 4px 8px;
+}
+.pwa-logo {
+  height: 100%; width: auto; max-width: 100%;
+  object-fit: contain;
+}
+.pwa-title {
+  margin: 0 0 6px;
+  font-size: 19px; font-weight: 700;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.pwa-desc {
+  margin: 0 0 16px;
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.pwa-ios-guide {
+  text-align: left;
+  background: #f7f6f2;
+  border: 1px solid rgba(16, 26, 48, .08);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.pwa-ios-step {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 12.5px; line-height: 1.35; color: var(--ink);
+}
+.pwa-ios-step p { margin: 0; }
+.pwa-ios-num {
+  flex: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: var(--ink);
+  font-size: 11.5px; font-weight: 700;
+  display: grid; place-items: center;
+}
+.pwa-ios-icon {
+  display: inline-block; vertical-align: -2px;
+  width: 15px; height: 15px;
+  stroke: var(--ink);
+}
+
+.pwa-actions {
+  display: flex; flex-direction: column; gap: 8px;
+  width: 100%;
+}
+.pwa-btn {
+  width: 100%; min-height: 44px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 14.5px; font-weight: 600;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
+  -webkit-tap-highlight-color: transparent;
+  border: 0;
+}
+.pwa-btn:active { transform: scale(.97); }
+.pwa-btn--install {
+  background: var(--brand);
+  color: var(--ink);
+  box-shadow: 0 4px 12px rgba(242, 186, 23, .4);
+}
+.pwa-btn--install svg { width: 18px; height: 18px; }
+.pwa-btn--install:hover {
+  background: #f7c32b;
+  box-shadow: 0 6px 16px rgba(242, 186, 23, .5);
+}
+.pwa-btn--dismiss {
+  background: transparent;
+  color: var(--muted);
+}
+.pwa-btn--dismiss:hover {
+  background: rgba(16, 26, 48, .05);
+  color: var(--ink);
+}
+
+/* ==========================================================
    MENOS MOVIMIENTO (preferencia del sistema)
    ========================================================== */
 @media (prefers-reduced-motion: reduce) {
@@ -831,7 +996,7 @@ img, svg, video { display: block; }
   .ticker, .pull, .services > li { animation: none; }
   .pull__bar, .pull__bar::before, .pull__chev, .pull.is-hint .pull__drag { animation: none; }
   .wx-icon svg *, .wx-pop.is-counting .wx-pop__trend { animation: none; }
-  .pull__drag, .wx-overlay::before, .wx-modal, .svc, .embed-view__panel, .embed-view__scrim { transition-duration: .01ms; }
+  .pull__drag, .wx-overlay::before, .wx-modal, .svc, .embed-view__panel, .embed-view__scrim, .pwa-overlay, .pwa-modal { transition-duration: .01ms; }
 }
 </style>
 </head>
@@ -956,7 +1121,7 @@ img, svg, video { display: block; }
     <div class="wx-bg" aria-hidden="true">
       <div class="wx-bg__grad"></div>
       <div class="wx-bg__poster" id="wxPoster"></div>
-      <video class="wx-bg__video" id="wxVideo" muted loop playsinline webkit-playsinline preload="auto" tabindex="-1" disablepictureinpicture></video>
+      <video class="wx-bg__video" id="wxVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" tabindex="-1" disablepictureinpicture></video>
       <div class="wx-bg__scrim"></div>
     </div>
 
@@ -1072,6 +1237,46 @@ img, svg, video { display: block; }
       <iframe class="embed-frame" id="embedFrame" src="about:blank" title="Contenido embebido" allow="geolocation; microphone; camera; midi; encrypted-media; clipboard-read; clipboard-write; fullscreen" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"></iframe>
     </div>
 
+  </div>
+</div>
+
+<!-- ===================== POPUP DE INSTALACIÓN PWA ===================== -->
+<div class="pwa-overlay" id="pwaOverlay" hidden aria-hidden="true">
+  <div class="pwa-modal" id="pwaModal" role="dialog" aria-modal="true" aria-labelledby="pwaTitle">
+    <div class="pwa-card">
+      <div class="pwa-header">
+        <div class="pwa-badge">
+          <img class="pwa-logo" src="https://i.imgur.com/TwBpIWN.png" alt="Logotipo Ibagué" referrerpolicy="no-referrer">
+        </div>
+      </div>
+      <div class="pwa-content">
+        <h3 class="pwa-title" id="pwaTitle">Instala la aplicación</h3>
+        <p class="pwa-desc">Lleva Ibagué en tu pantalla de inicio para un acceso rápido y directo a taxis, comercio local, clima en vivo, entretenimiento y servicios de la ciudad.</p>
+
+        <!-- Instrucciones paso a paso para iOS (iPhone / iPad) -->
+        <div class="pwa-ios-guide" id="pwaIosGuide" hidden>
+          <div class="pwa-ios-step">
+            <span class="pwa-ios-num">1</span>
+            <p>Toca el botón <strong>Compartir</strong> <svg class="pwa-ios-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> en la barra inferior de Safari.</p>
+          </div>
+          <div class="pwa-ios-step">
+            <span class="pwa-ios-num">2</span>
+            <p>Desplázate y selecciona <strong>«Agregar al inicio»</strong> <svg class="pwa-ios-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>.</p>
+          </div>
+          <div class="pwa-ios-step">
+            <span class="pwa-ios-num">3</span>
+            <p>Toca <strong>«Agregar»</strong> en la esquina superior derecha.</p>
+          </div>
+        </div>
+      </div>
+      <div class="pwa-actions">
+        <button type="button" class="pwa-btn pwa-btn--install" id="pwaInstallBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span id="pwaInstallText">Instalar</span>
+        </button>
+        <button type="button" class="pwa-btn pwa-btn--dismiss" id="pwaDismissBtn">Ahora no</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1499,8 +1704,8 @@ if (USAR_EN_VIVO) {
     montarVideo();
   }
 
-  /* Velocidad de reproducción acelerada para mayor dinamismo */
-  const VELOCIDAD_VIDEO = 1.45;
+  /* Velocidad de reproducción acelerada para mayor dinamismo (más rápido) */
+  const VELOCIDAD_VIDEO = 1.75;
 
   function fijarVelocidadVideo() {
     try {
@@ -1521,6 +1726,13 @@ if (USAR_EN_VIVO) {
   video.muted = true;
   video.addEventListener('loadedmetadata', fijarVelocidadVideo);
   video.addEventListener('play', fijarVelocidadVideo);
+  video.addEventListener('canplay', () => {
+    fijarVelocidadVideo();
+    if (abierto && videoActivo) {
+      const p = video.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    }
+  });
   video.addEventListener('playing', () => {
     fijarVelocidadVideo();
     video.classList.add('is-on');
@@ -1863,7 +2075,7 @@ if (USAR_EN_VIVO) {
   const $btnHogar = $('btnHogar');
   if ($btnHogar) {
     $btnHogar.addEventListener('click', () => {
-      window.location.href = 'https://tolitecnoapp-glitch.github.io/IBAGUETQM/hogar.html';
+      abrirEmbed('https://tolitecnoapp-glitch.github.io/IBAGUETQM/hogar.html', 'Hogar y reparaciones');
     });
   }
 
@@ -1884,7 +2096,89 @@ if (USAR_EN_VIVO) {
   const $btnArcade = $('btnArcade');
   if ($btnArcade) {
     $btnArcade.addEventListener('click', () => {
-      window.location.href = 'https://tolitecnoapp-glitch.github.io/IBAGUETQM/kids.html';
+      abrirEmbed('https://tolitecnoapp-glitch.github.io/IBAGUETQM/kids.html', 'Zona arcade');
+    });
+  }
+
+  /* ==========================================================
+     PWA E INSTALACIÓN (Android & iOS)
+     ========================================================== */
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+  });
+
+  function esAppInstalada() {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.navigator.standalone === true ||
+           document.referrer.includes('android-app://');
+  }
+
+  function esIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  }
+
+  const pwaOverlay = $('pwaOverlay');
+  const pwaInstallBtn = $('pwaInstallBtn');
+  const pwaDismissBtn = $('pwaDismissBtn');
+  const pwaIosGuide = $('pwaIosGuide');
+  const pwaInstallText = $('pwaInstallText');
+
+  function mostrarPopupInstalacion() {
+    if (esAppInstalada()) return;
+    setTimeout(() => {
+      if (esAppInstalada()) return;
+      pwaOverlay.hidden = false;
+      void pwaOverlay.offsetWidth;
+      pwaOverlay.classList.add('is-open');
+    }, 850);
+  }
+
+  function cerrarPopupInstalacion() {
+    pwaOverlay.classList.remove('is-open');
+    setTimeout(() => {
+      pwaOverlay.hidden = true;
+    }, 280);
+  }
+
+  if (pwaDismissBtn) {
+    pwaDismissBtn.addEventListener('click', cerrarPopupInstalacion);
+  }
+
+  if (pwaInstallBtn) {
+    pwaInstallBtn.addEventListener('click', () => {
+      if (esIOS()) {
+        if (pwaIosGuide.hidden) {
+          pwaIosGuide.hidden = false;
+          pwaInstallText.textContent = '¡Entendido!';
+        } else {
+          cerrarPopupInstalacion();
+        }
+      } else if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          deferredPrompt = null;
+          cerrarPopupInstalacion();
+        }).catch(() => {
+          cerrarPopupInstalacion();
+        });
+      } else {
+        alert('Para instalar la aplicación, abre el menú de tu navegador (los tres puntos ⋮) y selecciona "Instalar aplicación" o "Agregar a la pantalla principal".');
+        cerrarPopupInstalacion();
+      }
+    });
+  }
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    cerrarPopupInstalacion();
+  });
+
+  // Registro de Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
     });
   }
 
@@ -1896,6 +2190,7 @@ if (USAR_EN_VIVO) {
   pintarFecha();
   escenaProvisional();
   cargarClima(false);        // precarga para que el modal abra con datos y video listo
+  mostrarPopupInstalacion();  // Muestra popup de instalación al inicio si no está instalada
 })();
 </script>
 </body>
