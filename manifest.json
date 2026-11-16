@@ -1,0 +1,29 @@
+{
+  "name": "Ibagué · Servicios de la ciudad",
+  "short_name": "Ibagué TQM",
+  "description": "Noticias del mundo, clima en vivo de Ibagué y acceso rápido a taxis, comercio local, turismo, hogar, domicilios, entretenimiento y zona arcade.",
+  "id": "/IBAGUETQM/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay"],
+  "orientation": "portrait-primary",
+  "background_color": "#f3f1ec",
+  "theme_color": "#ffffff",
+  "lang": "es-CO",
+  "categories": ["utilities", "lifestyle", "travel"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
