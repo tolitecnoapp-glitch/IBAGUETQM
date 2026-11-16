@@ -1,896 +1,1574 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ibagué - Portal Ciudadano</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ibagué · Servicios de la ciudad</title>
+<meta name="description" content="Noticias del mundo, clima en vivo de Ibagué y acceso rápido a taxis, comercio local, turismo, hogar, domicilios y zona arcade.">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="https://i.imgur.com/TwBpIWN.png" referrerpolicy="no-referrer">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.open-meteo.com" crossorigin>
+<link rel="preconnect" href="https://images.pexels.com">
+<link rel="preconnect" href="https://videos.pexels.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Google Fonts: Poppins -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================
+   BASE
+   ========================================================== */
+:root {
+  /* Variables del banner de noticias */
+  --bg: #0b1220;
+  --bar: #101a30;
+  --label: #d62839;
+  --text: #f2f5fa;
+  --accent: #ffb703;
+  --speed: 140s;          /* más grande = más lento */
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  /* Variables de la página */
+  --page: #f3f1ec;        /* fondo "no tan blanco" */
+  --ink: #101a30;
+  --muted: #586273;
+  --brand: #F2BA17;
+  --edge: #d8d4c8;        /* canto 3D de los botones */
+  --pull-h: 40px;         /* alto visible de la barra amarilla */
+  --font: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
 
-  <style>
-    /* ==========================================================
-       1. FUENTE GLOBAL POPPINS Y FONDO NO TAN BLANCO
-       ========================================================== */
-    * {
-      box-sizing: border-box;
-      font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-      -webkit-tap-highlight-color: transparent;
-    }
+*, *::before, *::after { box-sizing: border-box; }
 
-    :root {
-      --bg-app: #edf1f7;
-      --bar: #101a30;
-      --label: #d62839;
-      --text: #f2f5fa;
-      --accent: #ffb703;
-      --speed: 140s;
-      --brand-yellow: #F2BA17;
-    }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: var(--bg-app);
-      color: #1e293b;
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      transform: translateZ(0);
-    }
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
 
-    /* ==========================================================
-       2. CABECERA BLANCA REDUCIDA CON LOGO MÁS GRANDE A LA IZQUIERDA
-       ========================================================== */
-    .app-header {
-      background: #ffffff;
-      width: 100%;
-      height: 58px; /* Espacio reducido */
-      display: flex;
-      align-items: center;
-      padding: 0 18px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      position: sticky;
-      top: 0;
-      z-index: 40;
-    }
+button { font: inherit; color: inherit; }
+img, svg, video { display: block; }
+[hidden] { display: none !important; }
 
-    /* Animación de entrada para el icono izquierdo */
-    @keyframes iconEntrance {
-      0% {
-        opacity: 0;
-        transform: translateX(-40px) scale(0.75);
-      }
-      70% {
-        opacity: 1;
-        transform: translateX(4px) scale(1.05);
-      }
-      100% {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-      }
-    }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
 
-    .header-logo-icon {
-      height: 52px; /* Logo más grande */
-      width: auto;
-      object-fit: contain;
-      animation: iconEntrance 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      will-change: transform, opacity;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
-    }
+/* ==========================================================
+   CABECERA (solo el logo)
+   ========================================================== */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: #fff;
+  padding-top: env(safe-area-inset-top);
+  box-shadow: 0 1px 0 rgba(16, 26, 48, .06), 0 10px 22px -14px rgba(16, 26, 48, .3);
+}
+.topbar__inner {
+  height: 62px;
+  display: flex; align-items: center;
+  padding: 0 clamp(14px, 4vw, 32px);
+}
+.brand { display: flex; align-items: center; height: 100%; }
+.brand__logo {
+  height: 56px; width: auto; max-width: min(74vw, 340px);
+  object-fit: contain;
+  opacity: 0;
+  transform-origin: left center;
+}
+.brand__logo.is-in { animation: logoIn .8s cubic-bezier(.22, 1, .36, 1) .05s both; }
 
-    /* ==========================================================
-       3. BANNER DE NOTICIAS DEL MUNDO
-       ========================================================== */
-    .ticker {
-      display: flex;
-      align-items: stretch;
-      width: 100%;
-      height: 48px;
-      background: var(--bar);
-      color: var(--text);
-      overflow: hidden;
-      border-bottom: 3px solid var(--label);
-      box-shadow: 0 2px 6px rgba(0,0,0,.2);
-      position: relative;
-      z-index: 30;
-    }
+@keyframes logoIn {
+  0%   { opacity: 0; transform: translateX(-80px) rotate(-16deg) scale(.5); }
+  55%  { opacity: 1; transform: translateX(8px) rotate(3deg) scale(1.06); }
+  78%  { opacity: 1; transform: translateX(-3px) rotate(-1deg) scale(.99); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    .ticker__label {
-      flex: 0 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 16px;
-      background: var(--label);
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      font-size: 13px;
-      position: relative;
-      z-index: 2;
-    }
-    .ticker__label::after {
-      content: "";
-      position: absolute;
-      right: -10px; top: 0;
-      border-left: 10px solid var(--label);
-      border-top: 24px solid transparent;
-      border-bottom: 24px solid transparent;
-    }
-    .dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #fff;
-      animation: pulso 1.2s infinite;
-    }
-    @keyframes pulso { 50% { opacity: .25; } }
+/* ==========================================================
+   BANNER DE NOTICIAS
+   ========================================================== */
+.ticker {
+  position: relative; z-index: 30;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 52px;
+  background: var(--bar);
+  color: var(--text);
+  overflow: hidden;
+  border-bottom: 3px solid var(--label);
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  animation: tickerIn .6s ease .15s both;
+}
+@keyframes tickerIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
 
-    .ticker__viewport {
-      flex: 1 1 auto;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
+.ticker__label {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 18px;
+  background: var(--label);
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-size: 14px;
+  position: relative;
+  z-index: 2;
+}
+.ticker__label::after {
+  content: "";
+  position: absolute;
+  left: calc(100% - 1px); top: 0; bottom: 0;
+  width: 13px;
+  background: var(--label);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #fff;
+  animation: pulso 1.2s infinite;
+}
+@keyframes pulso { 50% { opacity: .25; } }
 
-    .ticker__track {
-      display: flex;
-      width: max-content;
-      animation: mover var(--speed) linear infinite;
-      will-change: transform;
-    }
-    .ticker:hover .ticker__track { animation-play-state: paused; }
+.ticker__viewport {
+  flex: 1 1 auto;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.ticker__viewport::after {
+  content: "";
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: 48px;
+  background: linear-gradient(90deg, rgba(16, 26, 48, 0), var(--bar));
+  pointer-events: none;
+}
 
-    @keyframes mover {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
+/* Movimiento de DERECHA a IZQUIERDA, en bucle continuo */
+.ticker__track {
+  display: flex;
+  width: max-content;
+  animation: mover var(--speed) linear infinite;
+  will-change: transform;
+}
+.ticker:hover .ticker__track { animation-play-state: paused; }
 
-    .ticker__group { display: flex; flex: 0 0 auto; }
-    .item {
-      white-space: nowrap;
-      padding: 0 24px 0 0;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-    }
-    .item::before {
-      content: "●";
-      color: var(--accent);
-      font-size: 9px;
-      margin: 0 12px 0 22px;
-    }
-    .item b { color: var(--accent); margin-right: 6px; font-weight: 700; }
+@keyframes mover {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
 
-    @media (max-width: 600px) {
-      .ticker { height: 42px; }
-      .ticker__label { padding: 0 10px; font-size: 11px; }
-      .item { font-size: 12px; }
-    }
+.ticker__group { display: flex; flex: 0 0 auto; }
+.item {
+  white-space: nowrap;
+  padding: 0 28px 0 0;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+.item::before {
+  content: "●";
+  color: var(--accent);
+  font-size: 10px;
+  margin: 0 14px 0 28px;
+}
+.item b { color: var(--accent); margin-right: 8px; font-weight: 700; }
 
-    /* ==========================================================
-       4. BARRA AMARILLA #F2BA17: COMPACTA, CURVAS INFERIORES,
-          TEXTO PEQUEÑO Y SÓLO APERTURA AL HALAR HACIA ABAJO
-       ========================================================== */
-    .pull-bar-container {
-      width: 100%;
-      background: #F2BA17;
-      box-shadow: 0 4px 12px rgba(242, 186, 23, 0.28);
-      cursor: grab;
-      user-select: none;
-      touch-action: pan-y;
-      position: relative;
-      border-radius: 0 0 18px 18px; /* Esquinas inferiores curvas */
-      padding: 5px 12px;           /* Contenedor menos alto */
-      border-bottom: 2px solid #dba306;
-      transition: transform 0.1s ease-out;
-      will-change: transform;
-    }
+@media (max-width: 600px) {
+  .ticker { height: 46px; }
+  .ticker__label { padding: 0 12px; font-size: 12px; }
+  .item { font-size: 14px; }
+}
 
-    .pull-bar-container:active {
-      cursor: grabbing;
-    }
+/* ==========================================================
+   BARRA PARA HALAR (#F2BA17)
+   Es una "cortina": su parte alta queda escondida detrás del
+   banner y baja cuando el usuario la hala. Solo se abre halando.
+   ========================================================== */
+.pull {
+  position: relative; z-index: 20;
+  width: 100%; max-width: 620px;
+  height: var(--pull-h);
+  margin: 0 auto;
+  animation: pullIn .5s cubic-bezier(.2, 1.3, .4, 1) .25s both;
+}
+@keyframes pullIn { from { transform: translateY(-110%); } to { transform: none; } }
 
-    @keyframes arrowBounceSmall {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(2px); }
-    }
+/* Zona que se arrastra (se mueve solo con transform: no recalcula la página) */
+.pull__drag {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: calc(var(--pull-h) + 240px);
+  touch-action: none;
+  will-change: transform;
+  transition: transform .45s cubic-bezier(.2, 1.4, .35, 1);
+}
+.pull.is-dragging .pull__drag { transition: none; }
 
-    .pull-arrow-icon {
-      display: inline-block;
-      animation: arrowBounceSmall 1.2s infinite ease-in-out;
-      font-size: 11px;
-    }
+/* Un toque no abre: la barra solo da un saltito para indicar que se hala */
+.pull.is-hint .pull__drag { animation: pullHint .5s cubic-bezier(.3, .7, .3, 1); }
+@keyframes pullHint {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(16px); }
+  65% { transform: translateY(0); }
+  82% { transform: translateY(5px); }
+}
 
-    /* ==========================================================
-       5. MODAL DEL CLIMA: MÁS PEQUEÑO, FLUIDO Y SIN LAG
-       ========================================================== */
-    .weather-modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(10, 16, 28, 0.72);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
-    }
+/* En pantallas táctiles, un poco más de zona para agarrarla con el dedo */
+@media (pointer: coarse) {
+  .pull__drag::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 12px; }
+}
 
-    .weather-modal-backdrop.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
+.pull__bar {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  margin: 0; padding: 0; border: 0;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  background: var(--brand);
+  color: var(--ink);
+  border-radius: 0 0 22px 22px;          /* esquinas inferiores curvas */
+  box-shadow: inset 0 -4px 0 rgba(122, 86, 0, .2), 0 12px 20px -12px rgba(150, 105, 0, .6);
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  animation: pullTug 3.2s cubic-bezier(.3, .7, .3, 1) 1.2s infinite;
+}
+.pull.is-dragging .pull__bar { cursor: grabbing; animation: none; }
+.pull__bar:focus { outline: none; }
+.pull__bar:focus-visible .pull__inner {
+  box-shadow: inset 0 0 0 3px var(--ink);
+  border-radius: 0 0 22px 22px;
+}
 
-    .weather-modal-card {
-      width: 100%;
-      max-width: 520px; /* Tamaño más pequeño y balanceado */
-      max-height: 90vh;
-      border-radius: 22px;
-      overflow: hidden;
-      position: relative;
-      background: rgba(18, 28, 48, 0.45);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
-      color: #ffffff;
-      transform: scale(0.96);
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
-      flex-direction: column;
-      will-change: transform;
-    }
+/* Tironcito que invita a halar */
+@keyframes pullTug {
+  0%, 40%, 100% { transform: translateY(0); }
+  10% { transform: translateY(6px); }
+  20% { transform: translateY(0); }
+  30% { transform: translateY(3px); }
+}
 
-    .weather-modal-backdrop.active .weather-modal-card {
-      transform: scale(1);
-    }
+/* Brillo que recorre la barra */
+.pull__bar::before {
+  content: "";
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 45%;
+  background: linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 100%);
+  transform: translateX(-130%) skewX(-18deg);
+  animation: pullShine 3.2s ease-in-out 1s infinite;
+  pointer-events: none;
+}
+@keyframes pullShine {
+  0%        { transform: translateX(-130%) skewX(-18deg); }
+  55%, 100% { transform: translateX(340%) skewX(-18deg); }
+}
 
-    .weather-bg-video {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      z-index: 1;
-      opacity: 0.82;
-      pointer-events: none;
-    }
+.pull__inner {
+  position: relative; flex: none;
+  width: 100%; height: var(--pull-h);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px;
+  padding: 2px 16px 6px;
+}
+.pull__label {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.pull__chev {
+  flex: none; width: 14px; height: 14px;
+  animation: chevDrop 1.4s ease-in-out infinite;
+}
+@keyframes chevDrop {
+  0%, 100% { opacity: .35; transform: translateY(-2px); }
+  50%      { opacity: 1;   transform: translateY(2px); }
+}
+.pull__grip {
+  width: 38px; height: 4px; border-radius: 99px;
+  background: rgba(16, 26, 48, .38);
+  transition: width .2s ease, background .2s ease;
+}
+.pull.is-armed .pull__grip { width: 60px; background: var(--ink); }
 
-    .weather-video-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(11, 18, 32, 0.45) 0%, rgba(11, 18, 32, 0.75) 100%);
-      z-index: 2;
-      pointer-events: none;
-    }
+/* Icono que aparece y gira a medida que se hala (sin texto) */
+.pull__peek {
+  position: absolute; left: 50%;
+  bottom: calc(var(--pull-h) + 12px);
+  width: 28px; height: 28px; margin-left: -14px;
+  opacity: .25;
+  transform: scale(.7);
+  pointer-events: none;
+}
 
-    .weather-modal-content {
-      position: relative;
-      z-index: 3;
-      overflow-y: auto;
-      padding: 20px 22px;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.2) transparent;
-    }
+/* Con el clima abierto se pausan las animaciones de fondo (menos trabajo para el equipo) */
+.wx-abierto .ticker__track,
+.wx-abierto .dot,
+.wx-abierto .pull__bar,
+.wx-abierto .pull__bar::before,
+.wx-abierto .pull__chev { animation-play-state: paused; }
 
-    .glass-tile-compact {
-      background: rgba(255, 255, 255, 0.14);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      border-radius: 16px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    }
+/* ==========================================================
+   BOTONES DE SERVICIOS (blancos, 3D)
+   ========================================================== */
+.main {
+  width: 100%; max-width: 652px;
+  margin: 0 auto;
+  padding: 34px 16px calc(56px + env(safe-area-inset-bottom));
+}
+.services { list-style: none; margin: 0; padding: 0; display: grid; gap: 24px; }
+.services > li {
+  animation: riseIn .45s cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc(.3s + var(--i, 0) * 55ms);
+}
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(22px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
 
-    .close-modal-btn {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      z-index: 10;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      line-height: 1;
-      cursor: pointer;
-      transition: background 0.15s ease, transform 0.15s ease;
-    }
+.svc {
+  position: relative;
+  width: 100%; min-height: 92px;
+  display: flex; align-items: center; gap: 16px;
+  padding: 8px 16px 8px 12px;
+  background: #fff;
+  border: 1px solid rgba(16, 26, 48, .06);
+  border-radius: 24px;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    inset 0 -4px 0 rgba(16, 26, 48, .04),
+    0 7px 0 var(--edge),
+    0 22px 28px -14px rgba(16, 26, 48, .38);
+  transition: transform .16s cubic-bezier(.3, .7, .4, 1), box-shadow .16s cubic-bezier(.3, .7, .4, 1);
+}
+.svc:active {
+  transform: translateY(5px);
+  box-shadow:
+    inset 0 -2px 0 rgba(16, 26, 48, .04),
+    0 2px 0 var(--edge),
+    0 8px 12px -8px rgba(16, 26, 48, .35);
+}
+.svc:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
 
-    .close-modal-btn:hover {
-      background: rgba(214, 40, 57, 0.9);
-      transform: scale(1.08);
-    }
+/* Icono grande, sin fondo ni sombra: solo la imagen sobre el botón */
+.svc__icon {
+  flex: none;
+  width: 80px; height: 80px;
+  background: none;
+}
+.svc__icon img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  transition: transform .25s cubic-bezier(.3, 1.4, .5, 1);
+}
+.svc__text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.svc__title { font-size: 17px; font-weight: 600; line-height: 1.25; }
+.svc__sub { font-size: 13.5px; font-weight: 400; line-height: 1.4; color: var(--muted); }
+.svc__arrow {
+  flex: none;
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--page);
+  transition: background .2s ease, transform .2s ease;
+}
+.svc__arrow svg { width: 18px; height: 18px; }
 
-    /* ==========================================================
-       6. LOS 6 BOTONES 3D BLANCOS:
-          ICONOS MÁS GRANDES Y SIN FONDO
-          SIN ACCIONES DE CLICK
-       ========================================================== */
-    .btn-3d {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 14px 18px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 7px 0 #cbd5e1, 0 12px 18px -2px rgba(15, 23, 42, 0.07);
-      transform: translateY(0);
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
-      cursor: pointer;
-      user-select: none;
-      text-align: left;
-    }
+@media (hover: hover) {
+  .svc:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 -4px 0 rgba(16, 26, 48, .04),
+      0 10px 0 var(--edge),
+      0 30px 32px -16px rgba(16, 26, 48, .4);
+  }
+  .svc:hover:active {
+    transform: translateY(5px);
+    box-shadow:
+      inset 0 -2px 0 rgba(16, 26, 48, .04),
+      0 2px 0 var(--edge),
+      0 8px 12px -8px rgba(16, 26, 48, .35);
+  }
+  .svc:hover .svc__icon img { transform: scale(1.07) rotate(-3deg); }
+  .svc:hover .svc__arrow { background: var(--brand); transform: translateX(3px); }
+}
 
-    .btn-3d:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 9px 0 #94a3b8, 0 16px 22px -2px rgba(15, 23, 42, 0.1);
-    }
+@media (max-width: 420px) {
+  .svc { gap: 12px; padding: 8px 12px 8px 10px; }
+  .svc__icon { width: 68px; height: 68px; }
+  .svc__title { font-size: 16px; }
+  .svc__sub { font-size: 13px; }
+  .svc__arrow { width: 20px; height: 20px; background: none; color: #8a92a0; }
+}
 
-    .btn-3d:active {
-      transform: translateY(5px);
-      box-shadow: 0 2px 0 #94a3b8, 0 4px 6px rgba(15, 23, 42, 0.06);
-    }
+/* ==========================================================
+   MODAL DEL CLIMA (glassmorphism + video de fondo)
+   Pensado para ir fluido: solo se anima opacidad y transform,
+   el fondo oscuro no usa desenfoque y el cristal se limita
+   a las tarjetas de datos.
+   ========================================================== */
+.wx-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  padding-top: max(16px, env(safe-area-inset-top));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  overscroll-behavior: contain;
+}
+.wx-overlay::before {            /* fondo oscuro detrás del modal */
+  content: "";
+  position: absolute; inset: 0;
+  background: rgba(9, 14, 26, .74);
+  opacity: 0;
+  transition: opacity .18s ease-out;
+}
+.wx-overlay.is-open::before { opacity: 1; }
 
-    /* Iconos más grandes, directamente sobre el contenedor horizontal blanco */
-    .btn-direct-icon {
-      width: 58px;
-      height: 58px;
-      object-fit: contain;
-      flex-shrink: 0;
-      margin-right: 18px;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
-    }
-  </style>
+.wx-modal {
+  position: relative; isolation: isolate;
+  width: 100%; max-width: 340px;
+  max-height: 100%;
+  display: flex; flex-direction: column;
+  color: #fff;
+  background: #1a2640;
+  border: 1px solid rgba(255, 255, 255, .3);
+  border-radius: 26px;
+  box-shadow: 0 24px 48px -18px rgba(0, 0, 0, .6);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-12px) scale(.97);
+  transform-origin: 50% 0;
+  transition: transform .2s cubic-bezier(.2, .8, .2, 1), opacity .16s ease-out;
+}
+.wx-overlay.is-open .wx-modal { opacity: 1; transform: none; }
+.wx-modal::after {            /* filo de cristal */
+  content: "";
+  position: absolute; inset: 0; z-index: 4;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), inset 0 0 0 1px rgba(255, 255, 255, .08);
+  pointer-events: none;
+}
+
+/* Fondo: degradado (respaldo) + foto fija inmediata + video + velo para leer bien */
+.wx-bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: inherit; }
+.wx-bg__grad, .wx-bg__poster, .wx-bg__video, .wx-bg__scrim { position: absolute; inset: 0; width: 100%; height: 100%; }
+.wx-bg__grad {
+  background-image: var(--wx-grad, linear-gradient(180deg, #2f76cf 0%, #6faee9 55%, #d5e6f5 100%));
+}
+.wx-bg__poster {
+  background-size: cover; background-position: center;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.wx-bg__poster.is-on { opacity: 1; }
+.wx-bg__video {
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+.wx-bg__video.is-on { opacity: 1; }
+
+/* Velo: claro de día (el video se ve de día) y oscuro de noche */
+.wx-bg__scrim {
+  background: linear-gradient(180deg, rgba(7, 12, 24, .44) 0%, rgba(7, 12, 24, .16) 40%, rgba(7, 12, 24, .5) 100%);
+}
+.wx-modal[data-luz="noche"] .wx-bg__scrim {
+  background: linear-gradient(180deg, rgba(3, 6, 18, .48) 0%, rgba(3, 6, 18, .28) 40%, rgba(3, 6, 18, .64) 100%);
+}
+.wx-modal[data-luz="noche-fuerte"] .wx-bg__scrim {
+  background: linear-gradient(180deg, rgba(3, 6, 18, .72) 0%, rgba(3, 6, 18, .62) 40%, rgba(3, 6, 18, .8) 100%);
+}
+
+/* Cristal (solo en las tarjetas de datos) */
+.glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, .22), rgba(255, 255, 255, .08));
+  border: 1px solid rgba(255, 255, 255, .3);
+  border-radius: 16px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35);
+}
+/* Equipos lentos: mismo aspecto pero sin desenfoque (se activa solo) */
+.wx-lite .glass {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: rgba(14, 22, 40, .46);
+}
+
+/* Botones del modal (pausa y cerrar) */
+.wx-tools { position: absolute; top: 12px; right: 12px; z-index: 3; display: flex; gap: 6px; }
+.wx-btn {
+  position: relative;
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  padding: 0;
+  color: #fff;
+  background: rgba(12, 18, 34, .36);
+  border: 1px solid rgba(255, 255, 255, .34);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .15s ease, transform .15s ease;
+}
+.wx-btn::after { content: ""; position: absolute; inset: -4px; }   /* zona táctil más cómoda */
+.wx-btn svg { width: 16px; height: 16px; transition: transform .25s ease; }
+.wx-btn:hover { background: rgba(255, 255, 255, .28); }
+.wx-btn:active { transform: scale(.92); }
+.wx-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.wx-close:hover svg { transform: rotate(90deg); }
+.wx-btn--video .i-play { display: none; }
+.wx-btn--video.is-paused .i-play { display: block; }
+.wx-btn--video.is-paused .i-pause { display: none; }
+
+/* Contenido */
+.wx-body {
+  position: relative; z-index: 1;
+  flex: 1 1 auto; min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 12px 14px 14px;
+}
+.wx-head { display: flex; flex-direction: column; gap: 6px; }
+.wx-head__row { min-height: 36px; display: flex; align-items: center; padding-right: 86px; }
+.wx-place {
+  margin: 0; max-width: 100%;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 11px 6px 8px;
+  background: rgba(12, 18, 34, .36);
+  border: 1px solid rgba(255, 255, 255, .32);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28);
+  font-size: 12.5px; font-weight: 600; line-height: 1.3;
+}
+.wx-place svg { flex: none; width: 14px; height: 14px; }
+.wx-place span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wx-date {
+  margin: 0; padding-left: 3px;
+  font-size: 12.5px; font-weight: 500;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .55);
+}
+
+.wx-hero { padding: 0 3px; text-shadow: 0 2px 12px rgba(0, 0, 0, .45); }
+.wx-hero__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.wx-temp {
+  display: inline-flex; align-items: flex-start;
+  font-size: clamp(60px, 18vw, 72px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -.03em;
+}
+.wx-temp__unit { margin: .3em 0 0 4px; font-size: .32em; font-weight: 500; letter-spacing: 0; }
+.wx-icon {
+  flex: none;
+  width: clamp(64px, 19vw, 76px); aspect-ratio: 1;
+}
+.wx-icon svg { width: 100%; height: 100%; overflow: visible; }
+.wx-cond { margin: 2px 0 0; font-size: 17px; font-weight: 600; line-height: 1.3; }
+.wx-feel { margin: 1px 0 0; font-size: 12px; font-weight: 400; }
+
+/* Iconos del clima animados */
+.wxi-spin { animation: wxSpin 20s linear infinite; }
+.wxi-float { animation: wxFloat 5s ease-in-out infinite alternate; }
+.wxi-drop { animation: wxDrop 1s linear infinite; }
+.wxi-flash { animation: wxFlash 2.6s linear infinite; }
+.wxi-twinkle circle { animation: wxTwinkle 2.2s ease-in-out infinite alternate; }
+.wxi-twinkle circle:nth-child(2) { animation-delay: .7s; }
+.wxi-twinkle circle:nth-child(3) { animation-delay: 1.3s; }
+.wxi-fog path { animation: wxFog 4s ease-in-out infinite alternate; }
+.wxi-fog path:nth-child(2) { animation-direction: alternate-reverse; }
+@keyframes wxSpin { to { transform: rotate(360deg); } }
+@keyframes wxFloat { from { transform: translateX(-1.5px); } to { transform: translateX(1.5px); } }
+@keyframes wxDrop {
+  0%   { transform: translate(1px, -3px); opacity: 0; }
+  30%  { opacity: 1; }
+  100% { transform: translate(-1.5px, 4px); opacity: 0; }
+}
+@keyframes wxFlash {
+  0%, 44%, 52%, 60%, 100% { opacity: 1; }
+  48% { opacity: .2; }
+  56% { opacity: .35; }
+}
+@keyframes wxTwinkle { from { opacity: .3; } to { opacity: 1; } }
+@keyframes wxFog { from { transform: translateX(-3px); } to { transform: translateX(3px); } }
+
+/* Aviso de error */
+.wx-error {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 12px;
+  font-size: 12px; line-height: 1.4;
+}
+.wx-error p { margin: 0; }
+.wx-error button {
+  flex: none;
+  padding: 7px 12px;
+  background: #fff; color: var(--ink);
+  border: 0; border-radius: 999px;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer;
+}
+.wx-error button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+
+/* Tarjetas de datos */
+.wx-stats {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+}
+.wx-stat { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; min-width: 0; padding: 10px; }
+.wx-stat > svg { width: 17px; height: 17px; margin-bottom: 4px; color: var(--brand); }
+.wx-stat__value {
+  display: flex; align-items: baseline;
+  font-size: clamp(16px, 4.8vw, 18px);
+  font-weight: 600;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.wx-stat__value small { margin-left: 3px; font-size: .58em; font-weight: 500; }
+.wx-stat__label { font-size: 11px; font-weight: 500; line-height: 1.3; opacity: .9; }
+
+.wx-pop { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0 10px; padding: 10px 12px; }
+.wx-pop__label { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 500; }
+.wx-pop__label svg { width: 16px; height: 16px; color: var(--brand); }
+.wx-pop__src { font-size: 10.5px; font-weight: 500; opacity: .9; text-align: right; }
+.wx-pop__value {
+  grid-column: 1 / -1;
+  margin: 0;
+  display: flex; align-items: center; gap: 8px;
+  font-size: clamp(27px, 8.4vw, 32px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+.wx-pop__trend { flex: none; width: 21px; height: 21px; color: var(--brand); }
+.wx-pop.is-counting .wx-pop__trend { animation: trendUp .4s ease-in-out infinite alternate; }
+@keyframes trendUp { from { transform: translateY(3px); } to { transform: translateY(-3px); } }
+
+.wx-foot { margin: 0; font-size: 10.5px; line-height: 1.5; text-align: center; opacity: .88; }
+.wx-foot a { color: inherit; text-underline-offset: 2px; }
+.wx-foot a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 4px; }
+
+/* Estado de carga */
+.wx-modal[data-estado="cargando"] [data-wx] {
+  width: fit-content;
+  color: transparent;
+  text-shadow: none;
+  background: rgba(255, 255, 255, .22);
+  border-radius: 10px;
+  -webkit-user-select: none; user-select: none;
+  animation: wxSkel 1s ease-in-out infinite alternate;
+}
+@keyframes wxSkel { from { opacity: .45; } to { opacity: 1; } }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: rgba(14, 22, 40, .46); }
+}
+
+/* ==========================================================
+   MENOS MOVIMIENTO (preferencia del sistema)
+   ========================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .ticker__track { animation-duration: 400s; }
+  .brand__logo.is-in { animation: fadeIn .4s ease both; }
+  .ticker, .pull, .services > li { animation: none; }
+  .pull__bar, .pull__bar::before, .pull__chev, .pull.is-hint .pull__drag { animation: none; }
+  .wx-icon svg *, .wx-pop.is-counting .wx-pop__trend { animation: none; }
+  .pull__drag, .wx-overlay::before, .wx-modal, .svc { transition-duration: .01ms; }
+}
+</style>
 </head>
 <body>
 
-  <!-- ==========================================================
-       1. CABECERA BLANCA REDUCIDA CON EL LOGO MÁS GRANDE A LA IZQUIERDA
-       (Sin texto "Ibagué Conectada", sin hora, sin "Capital Musical")
-       ========================================================== -->
-  <header class="app-header">
-    <img 
-      src="https://i.imgur.com/TwBpIWN.png" 
-      alt="Logo" 
-      class="header-logo-icon"
-      referrerpolicy="no-referrer"
-      loading="eager"
-    >
-  </header>
-
-  <!-- ==========================================================
-       2. BANNER DE NOTICIAS DEL MUNDO
-       ========================================================== -->
-  <div class="ticker" role="marquee" aria-label="Noticias del mundo">
-    <div class="ticker__label"><span class="dot"></span> Mundo</div>
-    <div class="ticker__viewport">
-      <div class="ticker__track" id="track"></div>
+<!-- ===================== CABECERA ===================== -->
+<header class="topbar">
+  <div class="topbar__inner">
+    <div class="brand">
+      <img class="brand__logo" id="logo" src="https://i.imgur.com/TwBpIWN.png" alt="Logotipo de la aplicación" referrerpolicy="no-referrer" decoding="async">
     </div>
   </div>
+</header>
 
-  <!-- ==========================================================
-       3. BARRA AMARILLA #F2BA17 COMPACTA:
-          TEXTO PUNTUAL PEQUEÑO, ESQUINAS INFERIORES CURVAS
-          Y APERTURA EXCLUSIVAMENTE AL HALAR HACIA ABAJO
-       ========================================================== -->
-  <div 
-    id="pullBar" 
-    class="pull-bar-container text-slate-900"
-    role="slider"
-    aria-label="Halar hacia abajo para ver clima"
-  >
-    <div class="flex items-center justify-center gap-1.5 text-center">
-      <span class="pull-arrow-icon font-black">▼</span>
-      <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-900">
-        Hala hacia abajo para ver el clima
+<!-- ===================== BANNER DE NOTICIAS ===================== -->
+<div class="ticker" role="marquee" aria-label="Noticias del mundo">
+  <div class="ticker__label"><span class="dot"></span> Mundo</div>
+  <div class="ticker__viewport">
+    <div class="ticker__track" id="track"></div>
+  </div>
+</div>
+
+<!-- ===================== BARRA PARA HALAR ===================== -->
+<section class="pull" id="pull" aria-label="Clima de Ibagué">
+  <div class="pull__drag" id="pullDrag">
+    <button class="pull__bar" id="pullBar" type="button" aria-haspopup="dialog" aria-label="Clima de Ibagué: hala hacia abajo para abrirlo">
+      <svg class="pull__peek" id="pullPeek" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+      <span class="pull__inner">
+        <span class="pull__label">
+          <svg class="pull__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>
+          <span>Clima</span>
+          <svg class="pull__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+        <span class="pull__grip" aria-hidden="true"></span>
       </span>
-      <span class="pull-arrow-icon font-black">▼</span>
-    </div>
+    </button>
   </div>
+</section>
 
-  <!-- ==========================================================
-       4. LOS 6 BOTONES HORIZONTALES BLANCOS EN 3D
-          ICONOS MÁS GRANDES Y SIN FONDO
-          SIN ACCIÓN PROGRAMADA
-       ========================================================== -->
-  <main class="max-w-xl mx-auto px-4 py-6">
-    <div class="flex flex-col gap-3.5">
-
-      <!-- BOTÓN 1: Taxis seguros -->
-      <div class="btn-3d" role="button" tabindex="0">
-        <img 
-          src="https://i.imgur.com/9f8mXAn.png" 
-          alt="Taxis seguros" 
-          class="btn-direct-icon"
-          referrerpolicy="no-referrer"
-          loading="lazy"
-        >
-        <div>
-          <h2 class="text-base font-bold text-slate-800 leading-snug">Taxis seguros</h2>
-          <p class="text-xs text-slate-500 font-medium">Solicita taxi desde la app.</p>
-        </div>
-      </div>
-
-      <!-- BOTÓN 2: Comercio local -->
-      <div class="btn-3d" role="button" tabindex="0">
-        <img 
-          src="https://i.imgur.com/HUXQEd3.png" 
-          alt="Comercio local" 
-          class="btn-direct-icon"
-          referrerpolicy="no-referrer"
-          loading="lazy"
-        >
-        <div>
-          <h2 class="text-base font-bold text-slate-800 leading-snug">Comercio local</h2>
-          <p class="text-xs text-slate-500 font-medium">Apoya a los negocios de la ciudad</p>
-        </div>
-      </div>
-
-      <!-- BOTÓN 3: Turismo -->
-      <div class="btn-3d" role="button" tabindex="0">
-        <img 
-          src="https://i.imgur.com/507A6oh.png" 
-          alt="Turismo" 
-          class="btn-direct-icon"
-          referrerpolicy="no-referrer"
-          loading="lazy"
-        >
-        <div>
-          <h2 class="text-base font-bold text-slate-800 leading-snug">Turismo</h2>
-          <p class="text-xs text-slate-500 font-medium">Explora los sitios turisticos</p>
-        </div>
-      </div>
-
-      <!-- BOTÓN 4: Hogar y reparaciones -->
-      <div class="btn-3d" role="button" tabindex="0">
-        <img 
-          src="https://i.imgur.com/YWF4kkG.png" 
-          alt="Hogar y reparaciones" 
-          class="btn-direct-icon"
-          referrerpolicy="no-referrer"
-          loading="lazy"
-        >
-        <div>
-          <h2 class="text-base font-bold text-slate-800 leading-snug">Hogar y reparaciones</h2>
-          <p class="text-xs text-slate-500 font-medium">Profesionales para tu casa</p>
-        </div>
-      </div>
-
-      <!-- BOTÓN 5: Domicilios -->
-      <div class="btn-3d" role="button" tabindex="0">
-        <img 
-          src="https://i.imgur.com/KGS6N4i.png" 
-          alt="Domicilios" 
-          class="btn-direct-icon"
-          referrerpolicy="no-referrer"
-          loading="lazy"
-        >
-        <div>
-          <h2 class="text-base font-bold text-slate-800 leading-snug">Domicilios</h2>
-          <p class="text-xs text-slate-500 font-medium">Pide comida y mandados</p>
-        </div>
-      </div>
-
-      <!-- BOTÓN 6: Zona arcade -->
-      <div class="btn-3d" role="button" tabindex="0">
-        <img 
-          src="https://i.imgur.com/r9OCkLg.png" 
-          alt="Zona arcade" 
-          class="btn-direct-icon"
-          referrerpolicy="no-referrer"
-          loading="lazy"
-        >
-        <div>
-          <h2 class="text-base font-bold text-slate-800 leading-snug">Zona arcade</h2>
-          <p class="text-xs text-slate-500 font-medium">Juegos dentro de la app</p>
-        </div>
-      </div>
-
-    </div>
-  </main>
-
-  <!-- ==========================================================
-       5. MODAL DEL CLIMA: MÁS PEQUEÑO, FLUIDO Y CON ADAPTACIÓN DÍA / NOCHE
-       ========================================================== -->
-  <div id="weatherModalBackdrop" class="weather-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="weatherCityTitle">
-    <div class="weather-modal-card">
-      
-      <!-- Video dinámico de fondo (Día soleado, Día nublado, Día lluvia, Noche despejada, Noche nublada, Noche lluvia) -->
-      <video 
-        id="weatherVideo" 
-        class="weather-bg-video" 
-        autoplay 
-        muted 
-        loop 
-        playsinline
-        preload="auto"
-      >
-        <source id="weatherVideoSource" src="https://videos.pexels.com/video-files/856185/856185-hd_1920_1080_30fps.mp4" type="video/mp4">
-      </video>
-
-      <div class="weather-video-overlay"></div>
-
-      <!-- Botón X para cerrar -->
-      <button 
-        id="closeWeatherModalBtn" 
-        class="close-modal-btn" 
-        aria-label="Cerrar modal"
-      >
-        &times;
-      </button>
-
-      <!-- Contenido compacto con Glassmorphism -->
-      <div class="weather-modal-content">
-        
-        <!-- Encabezado de ciudad y fecha -->
-        <div class="flex items-center justify-between border-b border-white/20 pb-3 mb-4 pr-10">
-          <div>
-            <h2 id="weatherCityTitle" class="text-xl sm:text-2xl font-bold text-white drop-shadow">
-              Ibagué, Tolima
-            </h2>
-            <div id="weatherCurrentDate" class="text-xs text-white/80 font-medium">
-              Cargando fecha...
-            </div>
-          </div>
-          <span id="weatherDayNightBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-white/20 border border-white/25 text-white">
-            ☀️ Día
+<!-- ===================== BOTONES DE SERVICIOS =====================
+     Por ahora ningún botón realiza acciones: se definirán más adelante. -->
+<main class="main">
+  <nav aria-label="Servicios de la ciudad">
+    <ul class="services">
+      <li style="--i:0">
+        <button class="svc" type="button">
+          <span class="svc__icon"><img src="https://i.imgur.com/9f8mXAn.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
+          <span class="svc__text">
+            <span class="svc__title">Taxis seguros</span>
+            <span class="svc__sub">Solicita taxi desde la app</span>
           </span>
+          <span class="svc__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 6 6 6-6 6"/></svg></span>
+        </button>
+      </li>
+      <li style="--i:1">
+        <button class="svc" type="button">
+          <span class="svc__icon"><img src="https://i.imgur.com/HUXQEd3.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
+          <span class="svc__text">
+            <span class="svc__title">Comercio local</span>
+            <span class="svc__sub">Apoya a los negocios de la ciudad</span>
+          </span>
+          <span class="svc__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 6 6 6-6 6"/></svg></span>
+        </button>
+      </li>
+      <li style="--i:2">
+        <button class="svc" type="button">
+          <span class="svc__icon"><img src="https://i.imgur.com/507A6oh.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
+          <span class="svc__text">
+            <span class="svc__title">Turismo</span>
+            <span class="svc__sub">Explora los sitios turísticos</span>
+          </span>
+          <span class="svc__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 6 6 6-6 6"/></svg></span>
+        </button>
+      </li>
+      <li style="--i:3">
+        <button class="svc" type="button">
+          <span class="svc__icon"><img src="https://i.imgur.com/YWF4kkG.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
+          <span class="svc__text">
+            <span class="svc__title">Hogar y reparaciones</span>
+            <span class="svc__sub">Profesionales para tu casa</span>
+          </span>
+          <span class="svc__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 6 6 6-6 6"/></svg></span>
+        </button>
+      </li>
+      <li style="--i:4">
+        <button class="svc" type="button">
+          <span class="svc__icon"><img src="https://i.imgur.com/KGS6N4i.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
+          <span class="svc__text">
+            <span class="svc__title">Domicilios</span>
+            <span class="svc__sub">Pide comida y mandados</span>
+          </span>
+          <span class="svc__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 6 6 6-6 6"/></svg></span>
+        </button>
+      </li>
+      <li style="--i:5">
+        <button class="svc" type="button">
+          <span class="svc__icon"><img src="https://i.imgur.com/r9OCkLg.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
+          <span class="svc__text">
+            <span class="svc__title">Zona arcade</span>
+            <span class="svc__sub">Juegos dentro de la app</span>
+          </span>
+          <span class="svc__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 6 6 6-6 6"/></svg></span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+</main>
+
+<!-- ===================== MODAL DEL CLIMA ===================== -->
+<div class="wx-overlay" id="wxOverlay" hidden>
+  <div class="wx-modal" id="wxModal" role="dialog" aria-modal="true" aria-labelledby="wxTitle" data-estado="cargando" data-luz="dia">
+
+    <div class="wx-bg" aria-hidden="true">
+      <div class="wx-bg__grad"></div>
+      <div class="wx-bg__poster" id="wxPoster"></div>
+      <video class="wx-bg__video" id="wxVideo" muted loop playsinline preload="none" tabindex="-1" disablepictureinpicture></video>
+      <div class="wx-bg__scrim"></div>
+    </div>
+
+    <div class="wx-tools">
+      <button class="wx-btn wx-btn--video" id="wxVideoBtn" type="button" aria-label="Pausar video de fondo">
+        <svg class="i-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M9 5.5v13M15 5.5v13"/></svg>
+        <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6a.6.6 0 0 0 .92.5l10.4-6.8a.6.6 0 0 0 0-1L8.92 4.7A.6.6 0 0 0 8 5.2z"/></svg>
+      </button>
+      <button class="wx-btn wx-close" id="wxClose" type="button" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="wx-body" id="wxBody">
+      <div class="wx-head">
+        <div class="wx-head__row">
+          <h2 class="wx-place" id="wxTitle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Ibagué, Tolima</span>
+          </h2>
         </div>
-
-        <!-- Tarjeta principal de Clima (Google Weather Style) -->
-        <div class="glass-tile-compact p-4 mb-4 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <span id="weatherMainIcon" class="text-5xl drop-shadow select-none">☀️</span>
-            <div>
-              <div class="flex items-baseline">
-                <span id="weatherTemp" class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow">
-                  24°
-                </span>
-                <span class="text-lg font-bold text-amber-300 ml-0.5">C</span>
-              </div>
-              <p id="weatherCondition" class="text-sm font-semibold text-white/95 capitalize leading-tight">
-                Cargando condición...
-              </p>
-            </div>
-          </div>
-
-          <!-- Selector rápido de estados de clima para probar -->
-          <div class="flex flex-col gap-1 items-end">
-            <span class="text-[10px] text-white/70 font-semibold uppercase">Ambiente:</span>
-            <div class="grid grid-cols-2 gap-1 text-[11px]">
-              <button type="button" onclick="setWeatherState('day_sunny')" class="px-2 py-1 rounded bg-white/15 hover:bg-white/30 text-white font-medium">☀️ Día claro</button>
-              <button type="button" onclick="setWeatherState('night_clear')" class="px-2 py-1 rounded bg-white/15 hover:bg-white/30 text-white font-medium">🌙 Noche clara</button>
-              <button type="button" onclick="setWeatherState('day_cloudy')" class="px-2 py-1 rounded bg-white/15 hover:bg-white/30 text-white font-medium">⛅ Día tenue</button>
-              <button type="button" onclick="setWeatherState('night_cloudy')" class="px-2 py-1 rounded bg-white/15 hover:bg-white/30 text-white font-medium">☁️ Noche tenue</button>
-              <button type="button" onclick="setWeatherState('day_rain')" class="px-2 py-1 rounded bg-white/15 hover:bg-white/30 text-white font-medium">🌧️ Día lluvia</button>
-              <button type="button" onclick="setWeatherState('night_rain')" class="px-2 py-1 rounded bg-white/15 hover:bg-white/30 text-white font-medium">🌧️ Noche lluvia</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Malla de Datos Reales de Ibagué -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-2">
-          
-          <!-- Humedad -->
-          <div class="glass-tile-compact p-3 text-center">
-            <span class="text-[10px] uppercase font-bold text-white/70 block">Humedad</span>
-            <span id="weatherHumidity" class="text-xl sm:text-2xl font-black text-white block my-0.5">74%</span>
-            <span class="text-[10px] text-white/75 font-medium">💧 Óptima</span>
-          </div>
-
-          <!-- Viento -->
-          <div class="glass-tile-compact p-3 text-center">
-            <span class="text-[10px] uppercase font-bold text-white/70 block">Viento</span>
-            <span id="weatherWind" class="text-xl sm:text-2xl font-black text-white block my-0.5">10 km/h</span>
-            <span class="text-[10px] text-white/75 font-medium">💨 Cañón</span>
-          </div>
-
-          <!-- Altura -->
-          <div class="glass-tile-compact p-3 text-center">
-            <span class="text-[10px] uppercase font-bold text-white/70 block">Altura</span>
-            <span class="text-xl sm:text-2xl font-black text-amber-300 block my-0.5">1.285 m</span>
-            <span class="text-[10px] text-white/75 font-medium">⛰️ s. n. m.</span>
-          </div>
-
-          <!-- Habitantes (Contador animado) -->
-          <div class="glass-tile-compact p-3 text-center border-amber-300/40 bg-amber-500/15">
-            <span class="text-[10px] uppercase font-bold text-amber-200 block">Habitantes</span>
-            <span id="weatherPopulationCounter" class="text-base sm:text-lg font-black text-white block my-0.5">0</span>
-            <span class="text-[10px] text-amber-100 font-semibold">👥 Ibagué</span>
-          </div>
-
-        </div>
-
+        <p class="wx-date"><time id="wxDate"></time></p>
       </div>
+
+      <div class="wx-hero">
+        <div class="wx-hero__top">
+          <div class="wx-temp" data-wx><span id="wxTemp">--</span><span class="wx-temp__unit">°C</span></div>
+          <div class="wx-icon" id="wxIcon" aria-hidden="true"></div>
+        </div>
+        <p class="wx-cond" id="wxCond" data-wx>Cargando clima…</p>
+        <p class="wx-feel" data-wx>Sensación térmica <span id="wxFeel">--</span>°</p>
+      </div>
+
+      <div class="wx-error glass" id="wxError" role="status" hidden>
+        <p>No pudimos cargar el clima. Revisa tu conexión.</p>
+        <button type="button" id="wxRetry">Reintentar</button>
+      </div>
+
+      <ul class="wx-stats">
+        <li class="wx-stat glass">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          <span class="wx-stat__value" data-wx><span id="wxHum">--</span><small>%</small></span>
+          <span class="wx-stat__label">Humedad</span>
+        </li>
+        <li class="wx-stat glass">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+          <span class="wx-stat__value" data-wx><span id="wxWind">--</span><small>km/h</small></span>
+          <span class="wx-stat__label">Viento</span>
+        </li>
+        <li class="wx-stat glass">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 20 9 8l4.2 7.2 2.3-3.2 6 8z"/></svg>
+          <span class="wx-stat__value"><span id="wxAlt">1.285</span><small aria-hidden="true">m</small><span class="sr-only"> metros sobre el nivel del mar</span></span>
+          <span class="wx-stat__label">Altitud</span>
+        </li>
+      </ul>
+
+      <div class="wx-pop glass" id="wxPopBox">
+        <span class="wx-pop__label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Habitantes
+        </span>
+        <span class="wx-pop__src" id="wxPopSrc">Proyección DANE</span>
+        <p class="wx-pop__value">
+          <span class="sr-only" id="wxPopSr"></span>
+          <span id="wxPop" aria-hidden="true">0</span>
+          <svg class="wx-pop__trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
+        </p>
+      </div>
+
+      <p class="wx-foot"><span id="wxUpd"></span>Clima: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · Población: DANE</p>
     </div>
   </div>
+</div>
 
-  <!-- ==========================================================
-       SCRIPTS LIGEROS, ULTRA FLUIDOS Y SIN LAG
-       ========================================================== -->
-  <script>
-    /* ==========================================================
-       A. BANNER DE NOTICIAS
-       ========================================================== */
-    const TITULARES = [
-      ["ONU",        "La Asamblea General vota hoy la resolución de Cuba que pide a EE.UU. poner fin al embargo"],
-      ["ISRAEL",     "Netanyahu lidera el escrutinio de las elecciones y defiende formar un gobierno de derecha"],
-      ["EE.UU.",     "Los sondeos dan ventaja a los demócratas para recuperar la Cámara de Representantes"],
-      ["UCRANIA",    "Finlandia y Noruega hablan con Putin; se prepara una reunión trilateral en Abu Dabi en noviembre"],
-      ["INDIA",      "El ciclón Arnab toca tierra en la costa oriental con vientos de hasta 140 km/h"],
-      ["JAPÓN",      "Un terremoto de magnitud 7 sacude unas islas al sur de Tokio, sin alerta de tsunami"],
-      ["ALEMANIA",   "Merz llega a Tokio para reunirse con la primera ministra Takaichi"],
-      ["BRASIL",     "Flávio Bolsonaro viaja a EE.UU. tras pasar por Argentina y Ecuador"],
-      ["FRANCIA",    "El Senado aprueba una ley más dura contra saqueos y disturbios"],
-      ["ECONOMÍA",   "El Banco de Canadá anuncia hoy su decisión sobre los tipos de interés"],
-      ["EMPRESAS",   "Airbus presenta sus resultados de los tres primeros trimestres de 2026"],
-      ["TECNOLOGÍA", "Apple celebra su evento «Pro and tell» con nuevos productos e IA"],
-      ["MALASIA",    "Aduanas incauta servidores con chips de IA valorados en 10,9 millones de euros"],
-      ["REINO UNIDO","Carlos III reconoce en Bahamas el gran sufrimiento causado por la trata de esclavos"]
-    ];
+<!-- ===================== SCRIPT DEL BANNER DE NOTICIAS ===================== -->
+<script>
+/* ==========================================================
+   TITULARES (editables). Actualizados: miércoles 28-oct-2026
+   Formato: ["Etiqueta", "Texto"]
+   ========================================================== */
+const TITULARES = [
+  ["ONU",        "La Asamblea General vota hoy la resolución de Cuba que pide a EE.UU. poner fin al embargo"],
+  ["ISRAEL",     "Netanyahu lidera el escrutinio de las elecciones y defiende formar un gobierno de derecha"],
+  ["EE.UU.",     "Los sondeos dan ventaja a los demócratas para recuperar la Cámara de Representantes"],
+  ["UCRANIA",    "Finlandia y Noruega hablan con Putin; se prepara una reunión trilateral en Abu Dabi en noviembre"],
+  ["INDIA",      "El ciclón Arnab toca tierra en la costa oriental con vientos de hasta 140 km/h"],
+  ["JAPÓN",      "Un terremoto de magnitud 7 sacude unas islas al sur de Tokio, sin alerta de tsunami"],
+  ["ALEMANIA",   "Merz llega a Tokio para reunirse con la primera ministra Takaichi"],
+  ["BRASIL",     "Flávio Bolsonaro viaja a EE.UU. tras pasar por Argentina y Ecuador"],
+  ["FRANCIA",    "El Senado aprueba una ley más dura contra saqueos y disturbios"],
+  ["ECONOMÍA",   "El Banco de Canadá anuncia hoy su decisión sobre los tipos de interés"],
+  ["EMPRESAS",   "Airbus presenta sus resultados de los tres primeros trimestres de 2026"],
+  ["TECNOLOGÍA", "Apple celebra su evento «Pro and tell» con nuevos productos e IA"],
+  ["MALASIA",    "Aduanas incauta servidores con chips de IA valorados en 10,9 millones de euros"],
+  ["REINO UNIDO","Carlos III reconoce en Bahamas el gran sufrimiento causado por la trata de esclavos"]
+];
 
-    const track = document.getElementById("track");
+/* ==========================================================
+   OPCIONAL: titulares en vivo y gratis (BBC Mundo vía rss2json).
+   Si falla o no hay conexión, se usan los TITULARES de arriba.
+   ========================================================== */
+const USAR_EN_VIVO = true;
+const RSS = "https://feeds.bbci.co.uk/mundo/rss.xml";
+const API = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(RSS);
 
-    function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+const track = document.getElementById("track");
 
-    function pintar(lista){
-      const grupo = lista.map(([e,t]) => `<div class="item"><b>${esc(e)}</b>${esc(t)}</div>`).join("");
-      track.innerHTML = `<div class="ticker__group">${grupo}</div><div class="ticker__group" aria-hidden="true">${grupo}</div>`;
-      const ancho = track.firstElementChild ? track.firstElementChild.getBoundingClientRect().width : 1000;
-      document.documentElement.style.setProperty("--speed", Math.max(40, ancho / 70) + "s");
+function esc(s){ return s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function pintar(lista){
+  const grupo = lista.map(([e,t]) => `<div class="item"><b>${esc(e)}</b>${esc(t)}</div>`).join("");
+  // Dos copias idénticas para que el bucle no tenga saltos
+  track.innerHTML = `<div class="ticker__group">${grupo}</div><div class="ticker__group" aria-hidden="true">${grupo}</div>`;
+  // Velocidad constante según el largo del contenido (~70 px/seg)
+  const ancho = track.firstElementChild.getBoundingClientRect().width;
+  document.documentElement.style.setProperty("--speed", Math.max(40, ancho / 70) + "s");
+}
+
+pintar(TITULARES);
+
+if (USAR_EN_VIVO) {
+  fetch(API)
+    .then(r => r.json())
+    .then(d => {
+      if (d.status === "ok" && d.items && d.items.length) {
+        const vivos = d.items.slice(0, 15).map(i => ["BBC MUNDO", i.title]);
+        pintar(vivos.concat(TITULARES));
+      }
+    })
+    .catch(() => { /* sin conexión: se queda con los titulares fijos */ });
+}
+</script>
+
+<!-- ===================== SCRIPT DE LA PÁGINA ===================== -->
+<script>
+(() => {
+  'use strict';
+
+  /* ==========================================================
+     DATOS DE IBAGUÉ
+     - Clima en vivo: API gratuita de Open-Meteo (sin clave).
+     - Altitud: 1.285 m s. n. m. (cabecera municipal).
+     - Población: proyecciones del DANE con base en el censo 2018.
+       Se muestra la cifra del año en curso; añade más años aquí.
+     ========================================================== */
+  const CIUDAD = {
+    lat: 4.4378,
+    lon: -75.2006,
+    zona: 'America/Bogota',
+    altitud: 1285,
+    poblacion: { 2025: 554947, 2026: 557317, 2027: 559515, 2028: 561557 }
+  };
+
+  const URL_CLIMA = 'https://api.open-meteo.com/v1/forecast'
+    + '?latitude=' + CIUDAD.lat + '&longitude=' + CIUDAD.lon
+    + '&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m'
+    + '&wind_speed_unit=kmh&timezone=' + encodeURIComponent(CIUDAD.zona);
+
+  /* ==========================================================
+     FONDOS DEL MODAL (Pexels, uso libre)
+     Un video distinto para cada clima, de día y de noche:
+     de noche se usan tomas nocturnas y de día tomas diurnas.
+     - "videos": archivos del más liviano al más pesado. El navegador
+       usa el primero que exista, así carga rápido y sin trabarse.
+     - "poster": foto fija del mismo video; aparece al instante.
+     - "luz": velo claro (día) u oscuro (noche) sobre el fondo.
+     - "grad": degradado de respaldo si no hay conexión.
+     ========================================================== */
+  const V = 'https://videos.pexels.com/video-files/';
+  const P = 'https://images.pexels.com/videos/';
+  const Q = '?auto=compress&cs=tinysrgb&fit=crop&h=720&w=480';
+  const pantallaGrande = Math.min(window.innerWidth, window.innerHeight) >= 600;
+
+  function archivos(id, fps, vertical) {
+    const base = V + id + '/' + id;
+    const fin = '_' + fps + 'fps.mp4';
+    const lista = vertical
+      ? [base + '-sd_360_640' + fin, base + '-hd_1080_1920' + fin]
+      : [base + '-sd_640_360' + fin, base + '-hd_1920_1080' + fin];
+    // En pantallas grandes se intenta primero una calidad intermedia
+    if (pantallaGrande) lista.unshift(base + (vertical ? '-sd_540_960' : '-sd_960_540') + fin);
+    return lista;
+  }
+
+  const ESCENAS = {
+    // Sol y cielo azul
+    'despejado-dia': {
+      icono: 'sol', luz: 'dia', videos: archivos(1309214, 30),
+      poster: P + '1309214/free-video-1309214.jpg' + Q,
+      grad: 'linear-gradient(180deg,#1f6fd6 0%,#4fa3ee 55%,#a9d7fb 100%)'
+    },
+    // Cielo estrellado
+    'despejado-noche': {
+      icono: 'luna', luz: 'noche', videos: archivos(14369240, 30),
+      poster: P + '14369240/abundance-abundant-adoration-adventure-14369240.jpeg' + Q,
+      grad: 'linear-gradient(180deg,#060b1f 0%,#14224a 60%,#2a3f73 100%)'
+    },
+    // Sol entre nubes
+    'parcial-dia': {
+      icono: 'solNube', luz: 'dia', videos: archivos(12222644, 30, true),
+      poster: P + '12222644/pexels-photo-12222644.jpeg' + Q,
+      grad: 'linear-gradient(180deg,#2f76cf 0%,#6faee9 55%,#d5e6f5 100%)'
+    },
+    // Luna entre nubes
+    'parcial-noche': {
+      icono: 'lunaNube', luz: 'noche', videos: archivos(854739, 30),
+      poster: P + '854739/free-video-854739.jpg' + Q,
+      grad: 'linear-gradient(180deg,#0a1126 0%,#1c2a4d 60%,#3a4a6e 100%)'
+    },
+    // Cielo gris de día
+    'nublado-dia': {
+      icono: 'nubes', luz: 'dia', videos: archivos(6250002, 25),
+      poster: P + '6250002/pexels-photo-6250002.jpeg' + Q,
+      grad: 'linear-gradient(180deg,#56616f 0%,#8591a0 55%,#b9c2cc 100%)'
+    },
+    // Nubes cubriendo la luna
+    'nublado-noche': {
+      icono: 'nubes', luz: 'noche', videos: archivos(4221509, 30),
+      poster: P + '4221509/cloud-cover-clouds-full-moon-mcshane-4221509.jpeg' + Q,
+      grad: 'linear-gradient(180deg,#0d121c 0%,#222b3b 60%,#3b4658 100%)'
+    },
+    // Niebla de día
+    'niebla-dia': {
+      icono: 'niebla', luz: 'dia', videos: archivos(17749530, 30),
+      poster: P + '17749530/bajo-la-niebla-17749530.jpeg' + Q,
+      grad: 'linear-gradient(180deg,#77838f 0%,#a3adb6 55%,#d0d6db 100%)'
+    },
+    // Niebla de noche (misma toma con velo nocturno)
+    'niebla-noche': {
+      icono: 'niebla', luz: 'noche-fuerte', videos: archivos(17749530, 30),
+      poster: P + '17749530/bajo-la-niebla-17749530.jpeg' + Q,
+      grad: 'linear-gradient(180deg,#141a22 0%,#2c3540 60%,#4a545f 100%)'
+    },
+    // Lluvia de día (lluvia cayendo frente a un árbol)
+    'lluvia-dia': {
+      icono: 'lluvia', luz: 'dia', videos: archivos(7949099, 30),
+      poster: P + '7949099/rain-rain-falling-behind-a-tree-rain-falling-in-slow-motion-rainstorm-7949099.jpeg' + Q,
+      grad: 'linear-gradient(180deg,#4a5a6b 0%,#6f8497 55%,#9fb1c0 100%)'
+    },
+    // Lluvia de noche
+    'lluvia-noche': {
+      icono: 'lluvia', luz: 'noche', videos: archivos(10336271, 25, true),
+      poster: P + '10336271/drops-rain-rain-drops-watter-10336271.jpeg' + Q,
+      grad: 'linear-gradient(180deg,#080d16 0%,#17222f 60%,#2a3b4d 100%)'
+    },
+    // Tormenta de día (nubes oscuras de tormenta)
+    'tormenta-dia': {
+      icono: 'tormenta', luz: 'dia', videos: archivos(1427692, 30),
+      poster: P + '1427692/free-video-1427692.jpg' + Q,
+      grad: 'linear-gradient(180deg,#2c3644 0%,#4a586a 55%,#76879a 100%)'
+    },
+    // Tormenta de noche (rayos)
+    'tormenta-noche': {
+      icono: 'tormenta', luz: 'noche', videos: archivos(13205825, 25),
+      poster: P + '13205825/at-night-lighting-lighting-effect-storm-13205825.jpeg' + Q,
+      grad: 'linear-gradient(180deg,#0a0f1c 0%,#1a2338 60%,#2e3a55 100%)'
     }
+  };
 
-    pintar(TITULARES);
+  /* Códigos WMO que entrega Open-Meteo → texto [de día, de noche] */
+  const CONDICIONES = {
+    0:  ['Soleado', 'Despejado'],
+    1:  ['Mayormente soleado', 'Mayormente despejado'],
+    2:  ['Parcialmente nublado'],
+    3:  ['Nublado'],
+    45: ['Niebla'],
+    48: ['Niebla con escarcha'],
+    51: ['Llovizna ligera'],
+    53: ['Llovizna'],
+    55: ['Llovizna intensa'],
+    56: ['Llovizna helada'],
+    57: ['Llovizna helada intensa'],
+    61: ['Lluvia ligera'],
+    63: ['Lluvia'],
+    65: ['Lluvia fuerte'],
+    66: ['Lluvia helada'],
+    67: ['Lluvia helada fuerte'],
+    71: ['Nevada ligera'],
+    73: ['Nevada'],
+    75: ['Nevada fuerte'],
+    77: ['Granos de nieve'],
+    80: ['Chubascos ligeros'],
+    81: ['Chubascos'],
+    82: ['Chubascos fuertes'],
+    85: ['Chubascos de nieve'],
+    86: ['Chubascos de nieve fuertes'],
+    95: ['Tormenta eléctrica'],
+    96: ['Tormenta con granizo'],
+    99: ['Tormenta fuerte con granizo']
+  };
 
-    fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://feeds.bbci.co.uk/mundo/rss.xml"))
-      .then(r => r.json())
+  function tipoDeClima(codigo) {
+    if (codigo === 0 || codigo === 1) return 'despejado';
+    if (codigo === 2) return 'parcial';
+    if (codigo === 45 || codigo === 48) return 'niebla';
+    if (codigo >= 95) return 'tormenta';
+    if ((codigo >= 51 && codigo <= 67) || (codigo >= 80 && codigo <= 82)) return 'lluvia';
+    return 'nublado';
+  }
+
+  /* ---------- Iconos del clima (SVG) ---------- */
+  const NUBE = 'M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z';
+  const LUNA = 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z';
+  const svg = dentro => '<svg viewBox="0 0 64 64" focusable="false">' + dentro + '</svg>';
+  const nube = (t, color) => '<g class="wxi-float"><path transform="' + t + '" d="' + NUBE + '" fill="' + color + '"/></g>';
+  const GOTAS = '<g stroke="#8FD4FF" stroke-width="3.4" stroke-linecap="round" fill="none">'
+    + '<path class="wxi-drop" d="M22 51l-2.5 7"/>'
+    + '<path class="wxi-drop" style="animation-delay:.25s" d="M33 51l-2.5 7"/>'
+    + '<path class="wxi-drop" style="animation-delay:.5s" d="M44 51l-2.5 7"/></g>';
+  const ICONOS = {
+    sol: svg('<g class="wxi-spin" style="transform-origin:32px 32px"><path d="M32 4v8M32 52v8M4 32h8M52 32h8M12.2 12.2l5.7 5.7M46.1 46.1l5.7 5.7M12.2 51.8l5.7-5.7M46.1 17.9l5.7-5.7" stroke="#FFD866" stroke-width="3.6" stroke-linecap="round" fill="none"/></g><circle cx="32" cy="32" r="13" fill="#FFC53D"/>'),
+    luna: svg('<path transform="translate(5 5) scale(2.25)" d="' + LUNA + '" fill="#F7E7A3"/><g class="wxi-twinkle" fill="#fff"><circle cx="46" cy="14" r="1.8"/><circle cx="54" cy="26" r="1.3"/><circle cx="40" cy="24" r="1.1"/></g>'),
+    solNube: svg('<g class="wxi-spin" style="transform-origin:43px 21px"><path d="M43 8V4M43 34v4M56 21h4M30 21h-4M52.2 11.8l2.8-2.8M33.8 11.8l-2.8-2.8M52.2 30.2l2.8 2.8M33.8 30.2l-2.8 2.8" stroke="#FFD866" stroke-width="3.2" stroke-linecap="round" fill="none"/></g><circle cx="43" cy="21" r="10" fill="#FFC53D"/>' + nube('translate(2 17) scale(2.2)', '#fff')),
+    lunaNube: svg('<path transform="translate(28 2) scale(1.5)" d="' + LUNA + '" fill="#F7E7A3"/>' + nube('translate(2 17) scale(2.2)', '#fff')),
+    nubes: svg('<path transform="translate(24 6) scale(1.55)" d="' + NUBE + '" fill="#C4CFDD"/>' + nube('translate(2 17) scale(2.2)', '#fff')),
+    lluvia: svg(nube('translate(4 0) scale(2.35)', '#EEF3FA') + GOTAS),
+    tormenta: svg(nube('translate(4 0) scale(2.35)', '#DDE4EF') + '<path class="wxi-flash" d="M35 42l-9.5 12.5h7l-2.2 9L41 50h-7.2l1.2-8z" fill="#FFD23F"/>'),
+    niebla: svg(nube('translate(4 -3) scale(2.35)', '#fff') + '<g class="wxi-fog" stroke="#fff" stroke-opacity=".85" stroke-width="3.4" stroke-linecap="round" fill="none"><path d="M12 51h40"/><path d="M19 59h28"/></g>')
+  };
+
+  /* ---------- Utilidades ---------- */
+  const $ = id => document.getElementById(id);
+  const raiz = document.documentElement;
+  const menosMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ahorroDeDatos = !!(navigator.connection && navigator.connection.saveData);
+
+  const miles = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const capital = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+  const fmtFecha = new Intl.DateTimeFormat('es-CO', { timeZone: CIUDAD.zona, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const fmtPartes = new Intl.DateTimeFormat('en-CA', { timeZone: CIUDAD.zona, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23' });
+
+  /* Fecha y hora actuales en Ibagué, sin importar dónde esté el dispositivo */
+  function ahoraEnCiudad() {
+    const p = {};
+    fmtPartes.formatToParts(new Date()).forEach(x => { p[x.type] = x.value; });
+    return { anio: Number(p.year), iso: p.year + '-' + p.month + '-' + p.day, hora: Number(p.hour) % 24 };
+  }
+
+  /* "2026-11-15T23:00" → "a las 11:00 p. m." */
+  function horaLegible(iso) {
+    const partes = String(iso).slice(11, 16).split(':').map(Number);
+    const h = partes[0], m = partes[1];
+    if (!Number.isFinite(h) || !Number.isFinite(m)) return '';
+    const h12 = h % 12 || 12;
+    return (h12 === 1 ? 'a la ' : 'a las ') + h12 + ':' + String(m).padStart(2, '0') + (h < 12 ? ' a. m.' : ' p. m.');
+  }
+
+  /* ==========================================================
+     CABECERA: el logo entra animado cuando termina de cargar
+     ========================================================== */
+  const logo = $('logo');
+  const mostrarLogo = () => logo.classList.add('is-in');
+  const logoFallo = () => { logo.hidden = true; };
+  if (logo.complete) {
+    if (logo.naturalWidth) mostrarLogo(); else logoFallo();
+  } else {
+    logo.addEventListener('load', mostrarLogo, { once: true });
+    logo.addEventListener('error', logoFallo, { once: true });
+  }
+
+  /* ==========================================================
+     BOTONES DE SERVICIOS
+     Todavía no realizan ninguna acción. Aquí solo se oculta la
+     imagen si algún icono no llega a cargar.
+     ========================================================== */
+  document.querySelectorAll('.svc__icon img').forEach(img => {
+    const ocultar = () => { img.style.visibility = 'hidden'; };
+    if (img.complete && !img.naturalWidth) ocultar();
+    else img.addEventListener('error', ocultar, { once: true });
+  });
+
+  /* ==========================================================
+     MODAL DEL CLIMA
+     ========================================================== */
+  const overlay = $('wxOverlay'), modal = $('wxModal'), cuerpo = $('wxBody');
+  const video = $('wxVideo'), poster = $('wxPoster'), btnCerrar = $('wxClose'), btnVideo = $('wxVideoBtn');
+  const $temp = $('wxTemp'), $cond = $('wxCond'), $feel = $('wxFeel'), $hum = $('wxHum'), $wind = $('wxWind');
+  const $icon = $('wxIcon'), $date = $('wxDate'), $upd = $('wxUpd'), $error = $('wxError');
+  const $pop = $('wxPop'), $popSr = $('wxPopSr'), $popSrc = $('wxPopSrc'), $popBox = $('wxPopBox');
+
+  let clima = null;          // última lectura válida
+  let climaEn = 0;           // cuándo se obtuvo
+  let peticion = null;       // consulta en curso
+  let escena = null;         // clave de ESCENAS en uso
+  let iconoActual = '';
+  let abierto = false;
+  let videoActivo = !(menosMovimiento || ahorroDeDatos);
+  let ultimoFoco = null, cierreT = 0, rafPop = 0;
+  const videoBueno = {};     // archivo que ya funcionó en cada escena
+
+  // Equipos muy modestos: cristal sin desenfoque desde el inicio
+  if ((navigator.deviceMemory && navigator.deviceMemory <= 2) ||
+      (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2)) {
+    modal.classList.add('wx-lite');
+  }
+
+  function fijarEstado(estado) {
+    modal.dataset.estado = estado;
+    cuerpo.setAttribute('aria-busy', estado === 'cargando' ? 'true' : 'false');
+    $error.hidden = estado !== 'error';
+    if (estado === 'cargando') $cond.textContent = 'Cargando clima…';
+    if (estado === 'error') {
+      $temp.textContent = '--'; $feel.textContent = '--'; $hum.textContent = '--'; $wind.textContent = '--';
+      $cond.textContent = 'Clima no disponible';
+      $upd.textContent = '';
+    }
+  }
+
+  /* --- Consulta del clima real (se reutiliza durante 10 minutos) --- */
+  function cargarClima(forzar) {
+    const vigente = clima && (Date.now() - climaEn) < 10 * 60 * 1000;
+    if (vigente && !forzar) return Promise.resolve(clima);
+    if (peticion) return peticion;
+    if (!clima) fijarEstado('cargando');
+
+    const ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+    const limite = setTimeout(() => { if (ctrl) ctrl.abort(); }, 12000);
+
+    peticion = fetch(URL_CLIMA, { signal: ctrl ? ctrl.signal : undefined, cache: 'no-store' })
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(d => {
-        if (d.status === "ok" && d.items && d.items.length) {
-          const vivos = d.items.slice(0, 12).map(i => ["BBC MUNDO", i.title]);
-          pintar(vivos.concat(TITULARES));
+        const c = d && d.current;
+        if (!c || typeof c.temperature_2m !== 'number' || typeof c.weather_code !== 'number') {
+          throw new Error('Respuesta inesperada');
         }
+        clima = c;
+        climaEn = Date.now();
+        pintarClima();
+        return c;
       })
-      .catch(() => {});
+      .catch(() => { if (!clima) fijarEstado('error'); return null; })
+      .then(v => { clearTimeout(limite); peticion = null; return v; });
 
-    /* ==========================================================
-       B. VIDEOS CLIMÁTICOS SEGÚN ESTADO Y HORA (DÍA / NOCHE)
-       ========================================================== */
-    const WEATHER_VIDEOS = {
-      day_sunny: "https://videos.pexels.com/video-files/856185/856185-hd_1920_1080_30fps.mp4",
-      day_cloudy: "https://videos.pexels.com/video-files/11519743/11519743-hd_1920_1080_50fps.mp4",
-      day_rain: "https://videos.pexels.com/video-files/4786522/4786522-hd_1920_1080_30fps.mp4",
-      night_clear: "https://videos.pexels.com/video-files/5251546/5251546-hd_1920_1080_30fps.mp4",
-      night_cloudy: "https://videos.pexels.com/video-files/4100508/4100508-hd_1920_1080_30fps.mp4",
-      night_rain: "https://videos.pexels.com/video-files/4458918/4458918-hd_1920_1080_30fps.mp4"
+    return peticion;
+  }
+
+  function pintarClima() {
+    const c = clima;
+    const esDia = c.is_day === 1;
+    const textos = CONDICIONES[c.weather_code] || ['Condición variable'];
+    $temp.textContent = Math.round(c.temperature_2m);
+    $cond.textContent = (!esDia && textos[1]) || textos[0];
+    $feel.textContent = typeof c.apparent_temperature === 'number' ? Math.round(c.apparent_temperature) : '--';
+    $hum.textContent = typeof c.relative_humidity_2m === 'number' ? Math.round(c.relative_humidity_2m) : '--';
+    $wind.textContent = typeof c.wind_speed_10m === 'number' ? Math.round(c.wind_speed_10m) : '--';
+    const hora = horaLegible(c.time);
+    $upd.textContent = hora ? 'Actualizado ' + hora + ' · ' : '';
+    fijarEstado('listo');
+    // El fondo sale del estado del clima + si es de día o de noche en Ibagué
+    aplicarEscena(tipoDeClima(c.weather_code) + (esDia ? '-dia' : '-noche'));
+  }
+
+  /* --- Fondo según el clima y la hora --- */
+  function aplicarEscena(clave) {
+    const e = ESCENAS[clave];
+    if (!e || clave === escena) return;
+    escena = clave;
+    modal.dataset.luz = e.luz;
+    modal.style.setProperty('--wx-grad', e.grad);
+    if (iconoActual !== e.icono) {
+      iconoActual = e.icono;
+      $icon.innerHTML = ICONOS[e.icono] || '';
+    }
+    cargarPoster(e.poster);
+    if (abierto) reproducirVideo();
+  }
+
+  /* Mientras llega el clima: solo un degradado de día o de noche */
+  function escenaProvisional() {
+    const h = ahoraEnCiudad().hora;
+    const deDia = h >= 6 && h < 18;
+    modal.dataset.luz = deDia ? 'dia' : 'noche';
+    modal.style.setProperty('--wx-grad', (deDia ? ESCENAS['parcial-dia'] : ESCENAS['despejado-noche']).grad);
+  }
+
+  /* Foto fija del video: es liviana, se descarga en cuanto se conoce el clima
+     y así el modal abre con el fondo correcto sin esperar al video. */
+  function cargarPoster(url) {
+    if (poster.dataset.src === url) return;
+    poster.dataset.src = url;
+    poster.classList.remove('is-on');
+    const img = new Image();
+    img.onload = () => {
+      if (poster.dataset.src !== url) return;
+      poster.style.backgroundImage = 'url("' + url + '")';
+      poster.classList.add('is-on');
     };
+    img.src = url;
+  }
 
-    let isDayTime = true;
-    let currentConditionCode = 0;
+  /* Prepara las fuentes del video de la escena actual (sin reproducirlo) */
+  function montarVideo() {
+    if (!escena || video.dataset.escena === escena) return;
+    video.dataset.escena = escena;
+    video.classList.remove('is-on');
+    while (video.firstChild) video.removeChild(video.firstChild);
+    const lista = videoBueno[escena] ? [videoBueno[escena]] : ESCENAS[escena].videos;
+    lista.forEach(src => {
+      const fuente = document.createElement('source');
+      fuente.src = src;
+      fuente.type = 'video/mp4';
+      video.appendChild(fuente);
+    });
+    video.load();
+  }
 
-    function setWeatherState(stateKey) {
-      const video = document.getElementById("weatherVideo");
-      const videoSource = document.getElementById("weatherVideoSource");
-      const icon = document.getElementById("weatherMainIcon");
-      const cond = document.getElementById("weatherCondition");
-      const badge = document.getElementById("weatherDayNightBadge");
+  /* Empieza a descargar el video apenas el usuario toca la barra */
+  function calentarVideo() {
+    if (!videoActivo || !escena) return;
+    video.preload = 'auto';
+    montarVideo();
+  }
 
-      if (WEATHER_VIDEOS[stateKey] && videoSource) {
-        if (videoSource.src !== WEATHER_VIDEOS[stateKey]) {
-          videoSource.src = WEATHER_VIDEOS[stateKey];
-          video.load();
-          video.play().catch(() => {});
-        }
+  function reproducirVideo() {
+    if (!abierto || !videoActivo || !escena) return;
+    video.preload = 'auto';
+    montarVideo();
+    const p = video.play();
+    if (p && typeof p.catch === 'function') p.catch(() => {});
+  }
+
+  video.muted = true;
+  video.addEventListener('playing', () => {
+    video.classList.add('is-on');
+    if (video.dataset.escena && video.currentSrc) videoBueno[video.dataset.escena] = video.currentSrc;
+  });
+
+  function pintarBotonVideo() {
+    btnVideo.classList.toggle('is-paused', !videoActivo);
+    btnVideo.setAttribute('aria-label', videoActivo ? 'Pausar video de fondo' : 'Reproducir video de fondo');
+  }
+  btnVideo.addEventListener('click', () => {
+    videoActivo = !videoActivo;
+    pintarBotonVideo();
+    if (videoActivo) reproducirVideo(); else video.pause();
+  });
+
+  /* --- Fecha, altitud y población --- */
+  function pintarFecha() {
+    $date.textContent = capital(fmtFecha.format(new Date()));
+    $date.dateTime = ahoraEnCiudad().iso;
+  }
+
+  function poblacionVigente() {
+    const anio = ahoraEnCiudad().anio;
+    const anios = Object.keys(CIUDAD.poblacion).map(Number).sort((a, b) => a - b);
+    let elegido = anios[0];
+    anios.forEach(a => { if (a <= anio) elegido = a; });
+    return { anio: elegido, valor: CIUDAD.poblacion[elegido] };
+  }
+
+  /* Contador: la cifra sube desde 0 hasta la población actual */
+  function iniciarContador() {
+    const dato = poblacionVigente();
+    $popSrc.textContent = 'Proyección DANE ' + dato.anio;
+    $popSr.textContent = miles(dato.valor) + ' habitantes';
+    cancelAnimationFrame(rafPop);
+    $pop.textContent = '0';
+    $popBox.classList.add('is-counting');
+
+    const duracion = menosMovimiento ? 700 : 1400;
+    const inicio = performance.now() + 120;
+    let cuadros = 0, primero = 0, ultimoTexto = '0';
+
+    const paso = ahora => {
+      if (!primero) primero = ahora;
+      cuadros++;
+      const p = Math.min(1, Math.max(0, (ahora - inicio) / duracion));
+      const suave = 1 - Math.pow(1 - p, 4);
+      const texto = miles(dato.valor * suave);
+      if (texto !== ultimoTexto) { $pop.textContent = texto; ultimoTexto = texto; }
+      if (p < 1) { rafPop = requestAnimationFrame(paso); return; }
+
+      $popBox.classList.remove('is-counting');
+      // Medición rápida: si el equipo va a menos de ~40 cuadros por segundo,
+      // se quita el desenfoque del cristal para que todo vaya fluido.
+      const segundos = (ahora - primero) / 1000;
+      if (segundos > 0.6 && !document.hidden && (cuadros - 1) / segundos < 40) {
+        modal.classList.add('wx-lite');
       }
+    };
+    rafPop = requestAnimationFrame(paso);
+  }
 
-      if (stateKey.startsWith("night")) {
-        if (badge) badge.textContent = "🌙 Noche";
-      } else {
-        if (badge) badge.textContent = "☀️ Día";
-      }
+  /* --- Abrir y cerrar --- */
+  function bloquearScroll(activar) {
+    if (activar) {
+      const barra = window.innerWidth - raiz.clientWidth;
+      raiz.style.overflow = 'hidden';
+      if (barra > 0) document.body.style.paddingRight = barra + 'px';
+    } else {
+      raiz.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+  }
 
-      const descriptions = {
-        day_sunny: { icon: "☀️", text: "Soleado y despejado" },
-        day_cloudy: { icon: "⛅", text: "Tenue y parcialmente nublado" },
-        day_rain: { icon: "🌧️", text: "Lluvia de día" },
-        night_clear: { icon: "🌙", text: "Noche despejada y estrellada" },
-        night_cloudy: { icon: "☁️", text: "Noche tenue y nubosa" },
-        night_rain: { icon: "🌧️", text: "Lluvia nocturna" }
-      };
+  function abrir() {
+    if (abierto) return;
+    abierto = true;
+    clearTimeout(cierreT);
+    ultimoFoco = document.activeElement;
+    raiz.classList.add('wx-abierto');         // pausa las animaciones de fondo
+    bloquearScroll(true);
+    overlay.hidden = false;
+    void overlay.offsetWidth;                 // fuerza el inicio de la transición
+    overlay.classList.add('is-open');
+    cuerpo.scrollTop = 0;
+    pintarFecha();
+    iniciarContador();
+    cargarClima(false);
+    reproducirVideo();
+    btnCerrar.focus({ preventScroll: true });
+  }
 
-      if (descriptions[stateKey]) {
-        if (icon) icon.textContent = descriptions[stateKey].icon;
-        if (cond) cond.textContent = descriptions[stateKey].text;
+  function cerrar() {
+    if (!abierto) return;
+    abierto = false;
+    overlay.classList.remove('is-open');
+    video.pause();
+    cancelAnimationFrame(rafPop);
+    $popBox.classList.remove('is-counting');
+    cierreT = setTimeout(() => {
+      if (abierto) return;
+      overlay.hidden = true;
+      bloquearScroll(false);
+      raiz.classList.remove('wx-abierto');
+    }, 190);
+    if (ultimoFoco && typeof ultimoFoco.focus === 'function') ultimoFoco.focus({ preventScroll: true });
+  }
+
+  btnCerrar.addEventListener('click', cerrar);
+
+  // Clic fuera del modal (solo si el clic también empezó fuera)
+  let clicEnFondo = false;
+  overlay.addEventListener('pointerdown', e => { clicEnFondo = e.target === overlay; });
+  overlay.addEventListener('click', e => { if (e.target === overlay && clicEnFondo) cerrar(); });
+
+  // Teclado: Esc cierra y Tab no se sale del modal
+  document.addEventListener('keydown', e => {
+    if (!abierto) return;
+    if (e.key === 'Escape') { e.preventDefault(); cerrar(); return; }
+    if (e.key !== 'Tab') return;
+    const focos = Array.prototype.filter.call(
+      modal.querySelectorAll('button, a[href]'),
+      el => !el.disabled && el.offsetParent !== null
+    );
+    if (!focos.length) return;
+    const primero = focos[0], ultimo = focos[focos.length - 1];
+    if (!modal.contains(document.activeElement)) { e.preventDefault(); primero.focus(); }
+    else if (e.shiftKey && document.activeElement === primero) { e.preventDefault(); ultimo.focus(); }
+    else if (!e.shiftKey && document.activeElement === ultimo) { e.preventDefault(); primero.focus(); }
+  });
+
+  $('wxRetry').addEventListener('click', () => {
+    btnCerrar.focus({ preventScroll: true });
+    cargarClima(true);
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { video.pause(); return; }
+    if (abierto) { pintarFecha(); cargarClima(false); reproducirVideo(); }
+  });
+
+  /* ==========================================================
+     BARRA PARA HALAR
+     Solo se abre halándola hacia abajo (con el dedo o con el ratón).
+     Un toque o clic NO abre: la barra da un saltito para indicar el gesto.
+     (Con teclado se puede abrir con Enter, por accesibilidad.)
+     ========================================================== */
+  const pull = $('pull'), zona = $('pullDrag'), pullBar = $('pullBar'), peek = $('pullPeek');
+  const UMBRAL = 56;         // px que debe bajar la barra para abrir
+  const MAXIMO = 150;        // px máximos que baja
+  let arrastre = null;
+  let rafTiron = 0, dyPendiente = 0;
+
+  const amortiguar = recorrido => {
+    if (recorrido <= 0) return 0;
+    const d = recorrido * 0.85;
+    return Math.min(MAXIMO, d < 100 ? d : 100 + (d - 100) * 0.3);
+  };
+
+  // Un solo cambio visual por cuadro y solo con transform/opacidad: sin tirones
+  function pintarTiron() {
+    rafTiron = 0;
+    const dy = dyPendiente;
+    const p = Math.min(1, dy / UMBRAL);
+    zona.style.transform = dy ? 'translate3d(0,' + dy.toFixed(1) + 'px,0)' : '';
+    peek.style.opacity = (0.25 + p * 0.75).toFixed(2);
+    peek.style.transform = 'rotate(' + Math.round(p * 180) + 'deg) scale(' + (0.7 + p * 0.3).toFixed(2) + ')';
+  }
+  function fijarTiron(dy) {
+    dyPendiente = dy;
+    if (!rafTiron) rafTiron = requestAnimationFrame(pintarTiron);
+  }
+
+  zona.addEventListener('pointerdown', e => {
+    if (abierto) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    arrastre = { id: e.pointerId, y0: e.clientY, y: e.clientY, t: e.timeStamp, vy: 0, dy: 0, movido: false, armado: false };
+    try { zona.setPointerCapture(e.pointerId); } catch (err) { /* sin captura: sigue funcionando */ }
+    pull.classList.remove('is-hint');
+    pull.classList.add('is-dragging');
+    calentarVideo();          // adelanta la carga del fondo
+  });
+
+  zona.addEventListener('pointermove', e => {
+    if (!arrastre || e.pointerId !== arrastre.id) return;
+    const dt = e.timeStamp - arrastre.t;
+    if (dt > 0) arrastre.vy = 0.6 * ((e.clientY - arrastre.y) / dt) + 0.4 * arrastre.vy;
+    arrastre.y = e.clientY;
+    arrastre.t = e.timeStamp;
+
+    const recorrido = e.clientY - arrastre.y0;
+    if (Math.abs(recorrido) > 6) arrastre.movido = true;
+    arrastre.dy = amortiguar(recorrido);
+    fijarTiron(arrastre.dy);
+
+    const armado = arrastre.dy >= UMBRAL;
+    if (armado !== arrastre.armado) {
+      arrastre.armado = armado;
+      pull.classList.toggle('is-armed', armado);
+      if (armado && typeof navigator.vibrate === 'function') {
+        try { navigator.vibrate(12); } catch (err) { /* sin vibración */ }
       }
     }
+  });
 
-    // Consulta de Clima en Vivo para Ibagué
-    function fetchIbaguéData() {
-      const now = new Date();
-      const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      const dateEl = document.getElementById("weatherCurrentDate");
-      if (dateEl) {
-        const dStr = now.toLocaleDateString('es-CO', optionsDate);
-        dateEl.textContent = dStr.charAt(0).toUpperCase() + dStr.slice(1);
-      }
+  function soltar(e) {
+    if (!arrastre || e.pointerId !== arrastre.id) return;
+    const a = arrastre;
+    arrastre = null;
+    pull.classList.remove('is-dragging', 'is-armed');
+    cancelAnimationFrame(rafTiron);
+    dyPendiente = 0;
+    pintarTiron();                            // la barra regresa a su sitio
+    if (e.type !== 'pointerup') return;
 
-      const url = "https://api.open-meteo.com/v1/forecast?latitude=4.4389&longitude=-75.2322&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,is_day&timezone=America%2FBogota";
+    // Abre si bajó lo suficiente o si fue un tirón rápido hacia abajo
+    const tironRapido = a.vy > 0.5 && a.dy > 14 && (e.timeStamp - a.t) < 120;
+    if (a.armado || tironRapido) abrir();
+    else if (!a.movido) pull.classList.add('is-hint');   // solo un toque: no abre
+  }
+  zona.addEventListener('pointerup', soltar);
+  zona.addEventListener('pointercancel', soltar);
+  zona.addEventListener('lostpointercapture', soltar);
 
-      fetch(url)
-        .then(r => r.json())
-        .then(d => {
-          if (d && d.current) {
-            const cur = d.current;
-            document.getElementById("weatherTemp").textContent = Math.round(cur.temperature_2m) + "°";
-            document.getElementById("weatherHumidity").textContent = Math.round(cur.relative_humidity_2m) + "%";
-            document.getElementById("weatherWind").textContent = Math.round(cur.wind_speed_10m) + " km/h";
+  zona.addEventListener('animationend', e => {
+    if (e.animationName === 'pullHint') pull.classList.remove('is-hint');
+  });
 
-            isDayTime = cur.is_day === 1;
-            currentConditionCode = cur.weather_code;
+  // Los clics de ratón o dedo no abren; detail === 0 es activación por teclado
+  pullBar.addEventListener('click', e => { if (e.detail === 0) abrir(); });
 
-            let type = "sunny";
-            if (currentConditionCode <= 1) {
-              type = isDayTime ? "sunny" : "clear";
-            } else if (currentConditionCode <= 3) {
-              type = "cloudy";
-            } else {
-              type = "rain";
-            }
-
-            const stateKey = (isDayTime ? "day_" : "night_") + type;
-            setWeatherState(stateKey);
-          }
-        })
-        .catch(() => {
-          // Respaldo realista
-          const hours = (new Date()).getHours();
-          isDayTime = hours >= 6 && hours < 18;
-          setWeatherState(isDayTime ? "day_sunny" : "night_clear");
-        });
-    }
-
-    fetchIbaguéData();
-
-    /* ==========================================================
-       C. CONTADOR ANIMADO RÁPIDO DE HABITANTES
-       ========================================================== */
-    const IBAGUE_POPULATION = 543210;
-    let counterRunning = false;
-
-    function animatePopulationCounter() {
-      const counterEl = document.getElementById("weatherPopulationCounter");
-      if (!counterEl || counterRunning) return;
-      counterRunning = true;
-
-      const duration = 1200; // Más rápido y fluido
-      const start = performance.now();
-
-      function step(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const ease = 1 - Math.pow(1 - progress, 3);
-        const val = Math.floor(ease * IBAGUE_POPULATION);
-
-        counterEl.textContent = val.toLocaleString('es-CO');
-
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        } else {
-          counterEl.textContent = IBAGUE_POPULATION.toLocaleString('es-CO');
-          counterRunning = false;
-        }
-      }
-
-      requestAnimationFrame(step);
-    }
-
-    /* ==========================================================
-       D. APERTURA EXCLUSIVAMENTE AL HALAR HACIA ABAJO
-          (NO AL DAR CLIC)
-       ========================================================== */
-    const pullBar = document.getElementById("pullBar");
-    const weatherModalBackdrop = document.getElementById("weatherModalBackdrop");
-    const closeWeatherModalBtn = document.getElementById("closeWeatherModalBtn");
-
-    function openWeatherModal() {
-      weatherModalBackdrop.classList.add("active");
-      document.body.style.overflow = "hidden";
-      animatePopulationCounter();
-      const video = document.getElementById("weatherVideo");
-      if (video) video.play().catch(() => {});
-    }
-
-    function closeWeatherModal() {
-      weatherModalBackdrop.classList.remove("active");
-      document.body.style.overflow = "";
-    }
-
-    closeWeatherModalBtn.addEventListener("click", closeWeatherModal);
-    weatherModalBackdrop.addEventListener("click", (e) => {
-      if (e.target === weatherModalBackdrop) closeWeatherModal();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeWeatherModal();
-    });
-
-    // Gestos táctiles para HALAR hacia abajo (Drag down)
-    let startY = 0;
-    let isPulling = false;
-    let pullDistance = 0;
-
-    pullBar.addEventListener("touchstart", (e) => {
-      startY = e.touches[0].clientY;
-      isPulling = true;
-      pullDistance = 0;
-    }, { passive: true });
-
-    pullBar.addEventListener("touchmove", (e) => {
-      if (!isPulling) return;
-      const currentY = e.touches[0].clientY;
-      pullDistance = currentY - startY;
-
-      if (pullDistance > 0) {
-        pullBar.style.transform = `translateY(${Math.min(pullDistance * 0.45, 24)}px)`;
-      }
-    }, { passive: true });
-
-    pullBar.addEventListener("touchend", () => {
-      if (!isPulling) return;
-      isPulling = false;
-      pullBar.style.transform = "";
-
-      // Solo si se haló una distancia suficiente (> 28px)
-      if (pullDistance > 28) {
-        openWeatherModal();
-      }
-      pullDistance = 0;
-    });
-
-    // Gestos de ratón para HALAR hacia abajo (Click + Arrastre)
-    pullBar.addEventListener("mousedown", (e) => {
-      startY = e.clientY;
-      isPulling = true;
-      pullDistance = 0;
-    });
-
-    window.addEventListener("mousemove", (e) => {
-      if (!isPulling) return;
-      const currentY = e.clientY;
-      pullDistance = currentY - startY;
-
-      if (pullDistance > 0) {
-        pullBar.style.transform = `translateY(${Math.min(pullDistance * 0.4, 20)}px)`;
-      }
-    });
-
-    window.addEventListener("mouseup", () => {
-      if (!isPulling) return;
-      isPulling = false;
-      pullBar.style.transform = "";
-
-      // Si fue solo un clic sin arrastre (< 25px), NO abre
-      if (pullDistance > 25) {
-        openWeatherModal();
-      }
-      pullDistance = 0;
-    });
-  </script>
+  /* ==========================================================
+     INICIO
+     ========================================================== */
+  $('wxAlt').textContent = miles(CIUDAD.altitud);
+  pintarBotonVideo();
+  pintarFecha();
+  escenaProvisional();
+  cargarClima(false);        // precarga para que el modal abra con datos
+})();
+</script>
 </body>
 </html>
