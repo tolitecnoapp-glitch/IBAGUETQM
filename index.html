@@ -543,7 +543,7 @@ img, svg, video { display: block; }
   overflow-y: auto;
   overscroll-behavior: contain;
   display: flex; flex-direction: column; gap: 10px;
-  padding: 12px 14px 14px;
+  padding: 30px 14px 14px;
 }
 .wx-head { display: flex; flex-direction: column; gap: 6px; }
 .wx-head__row { min-height: 36px; display: flex; align-items: center; padding-right: 86px; }
@@ -776,6 +776,16 @@ img, svg, video { display: block; }
       </li>
       <li style="--i:4">
         <button class="svc" type="button">
+          <span class="svc__icon"><img src="https://i.imgur.com/ZHnliek.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
+          <span class="svc__text">
+            <span class="svc__title">Entretenimiento</span>
+            <span class="svc__sub">Tv en vivo, musica y novedades</span>
+          </span>
+          <span class="svc__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 6 6 6-6 6"/></svg></span>
+        </button>
+      </li>
+      <li style="--i:5">
+        <button class="svc" type="button">
           <span class="svc__icon"><img src="https://i.imgur.com/KGS6N4i.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
           <span class="svc__text">
             <span class="svc__title">Domicilios</span>
@@ -784,7 +794,7 @@ img, svg, video { display: block; }
           <span class="svc__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="m9 6 6 6-6 6"/></svg></span>
         </button>
       </li>
-      <li style="--i:5">
+      <li style="--i:6">
         <button class="svc" type="button">
           <span class="svc__icon"><img src="https://i.imgur.com/r9OCkLg.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
           <span class="svc__text">
@@ -805,7 +815,7 @@ img, svg, video { display: block; }
     <div class="wx-bg" aria-hidden="true">
       <div class="wx-bg__grad"></div>
       <div class="wx-bg__poster" id="wxPoster"></div>
-      <video class="wx-bg__video" id="wxVideo" muted loop playsinline preload="none" tabindex="-1" disablepictureinpicture></video>
+      <video class="wx-bg__video" id="wxVideo" muted loop playsinline preload="auto" tabindex="-1" disablepictureinpicture></video>
       <div class="wx-bg__scrim"></div>
     </div>
 
@@ -875,7 +885,6 @@ img, svg, video { display: block; }
         </p>
       </div>
 
-      <p class="wx-foot"><span id="wxUpd"></span>Clima: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · Población: DANE</p>
     </div>
   </div>
 </div>
@@ -985,8 +994,6 @@ if (USAR_EN_VIVO) {
     const lista = vertical
       ? [base + '-sd_360_640' + fin, base + '-hd_1080_1920' + fin]
       : [base + '-sd_640_360' + fin, base + '-hd_1920_1080' + fin];
-    // En pantallas grandes se intenta primero una calidad intermedia
-    if (pantallaGrande) lista.unshift(base + (vertical ? '-sd_540_960' : '-sd_960_540') + fin);
     return lista;
   }
 
@@ -1184,7 +1191,7 @@ if (USAR_EN_VIVO) {
   const overlay = $('wxOverlay'), modal = $('wxModal'), cuerpo = $('wxBody');
   const video = $('wxVideo'), poster = $('wxPoster'), btnCerrar = $('wxClose'), btnVideo = $('wxVideoBtn');
   const $temp = $('wxTemp'), $cond = $('wxCond'), $feel = $('wxFeel'), $hum = $('wxHum'), $wind = $('wxWind');
-  const $icon = $('wxIcon'), $date = $('wxDate'), $upd = $('wxUpd'), $error = $('wxError');
+  const $icon = $('wxIcon'), $date = $('wxDate'), $error = $('wxError');
   const $pop = $('wxPop'), $popSr = $('wxPopSr'), $popSrc = $('wxPopSrc'), $popBox = $('wxPopBox');
 
   let clima = null;          // última lectura válida
@@ -1211,7 +1218,6 @@ if (USAR_EN_VIVO) {
     if (estado === 'error') {
       $temp.textContent = '--'; $feel.textContent = '--'; $hum.textContent = '--'; $wind.textContent = '--';
       $cond.textContent = 'Clima no disponible';
-      $upd.textContent = '';
     }
   }
 
@@ -1252,8 +1258,6 @@ if (USAR_EN_VIVO) {
     $feel.textContent = typeof c.apparent_temperature === 'number' ? Math.round(c.apparent_temperature) : '--';
     $hum.textContent = typeof c.relative_humidity_2m === 'number' ? Math.round(c.relative_humidity_2m) : '--';
     $wind.textContent = typeof c.wind_speed_10m === 'number' ? Math.round(c.wind_speed_10m) : '--';
-    const hora = horaLegible(c.time);
-    $upd.textContent = hora ? 'Actualizado ' + hora + ' · ' : '';
     fijarEstado('listo');
     // El fondo sale del estado del clima + si es de día o de noche en Ibagué
     aplicarEscena(tipoDeClima(c.weather_code) + (esDia ? '-dia' : '-noche'));
@@ -1271,6 +1275,8 @@ if (USAR_EN_VIVO) {
       $icon.innerHTML = ICONOS[e.icono] || '';
     }
     cargarPoster(e.poster);
+    video.preload = 'auto';
+    montarVideo();
     if (abierto) reproducirVideo();
   }
 
@@ -1302,6 +1308,7 @@ if (USAR_EN_VIVO) {
     if (!escena || video.dataset.escena === escena) return;
     video.dataset.escena = escena;
     video.classList.remove('is-on');
+    video.preload = 'auto';
     while (video.firstChild) video.removeChild(video.firstChild);
     const lista = videoBueno[escena] ? [videoBueno[escena]] : ESCENAS[escena].videos;
     lista.forEach(src => {
