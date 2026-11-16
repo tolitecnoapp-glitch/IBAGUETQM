@@ -98,13 +98,13 @@ img, svg, video { display: block; }
   box-shadow: 0 1px 0 rgba(16, 26, 48, .06), 0 10px 22px -14px rgba(16, 26, 48, .3);
 }
 .topbar__inner {
-  height: 98px;
+  height: 54px;
   display: flex; align-items: center;
-  padding: 1px clamp(8px, 2vw, 16px);
+  padding: 3px clamp(8px, 2vw, 16px);
 }
 .brand { display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%; }
 .brand__logo {
-  height: 96px; width: 100%; max-width: 100%;
+  height: 48px; width: auto; max-width: 100%;
   object-fit: contain;
   object-position: left center;
   opacity: 0;
@@ -1969,11 +1969,13 @@ if (USAR_EN_VIVO) {
     { titulo: 'Entretenimiento', video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4' }
   ];
 
+  let vbObserver = null;
   function pintarBanner(lista) {
     if (!lista || !lista.length) { vbanner.hidden = true; return; }
     vbanner.hidden = false;
     vbTrack.innerHTML = '';
     vbDots.innerHTML = '';
+    if (vbObserver) vbObserver.disconnect();
     lista.forEach((v, i) => {
       const card = document.createElement('article');
       card.className = 'vbanner__card';
@@ -1981,9 +1983,12 @@ if (USAR_EN_VIVO) {
       video.src = v.video_url;
       video.muted = true;
       video.loop = true;
+      video.autoplay = true;
       video.playsInline = true;
-      video.preload = 'metadata';
+      video.preload = 'auto';
       video.setAttribute('playsinline', '');
+      video.setAttribute('muted', '');
+      video.setAttribute('autoplay', '');
       if (v.poster_url) video.poster = v.poster_url;
       const shade = document.createElement('div');
       shade.className = 'vbanner__shade';
@@ -2019,6 +2024,25 @@ if (USAR_EN_VIVO) {
       const idx = Math.round(vbTrack.scrollLeft / w);
       Array.prototype.forEach.call(vbDots.children, (d, i) => d.classList.toggle('is-on', i === idx));
     }, { passive: true });
+
+    // Autoplay fluido: solo el video visible se reproduce, los demás se pausan
+    if ('IntersectionObserver' in window) {
+      vbObserver = new IntersectionObserver(entradas => {
+        entradas.forEach(e => {
+          const vid = e.target.querySelector('video');
+          if (!vid) return;
+          if (e.isIntersecting && e.intersectionRatio >= 0.55) {
+            vid.play().catch(() => {});
+          } else {
+            vid.pause();
+          }
+        });
+      }, { root: vbTrack, threshold: [0, 0.55, 1] });
+      Array.prototype.forEach.call(vbTrack.children, c => vbObserver.observe(c));
+    } else {
+      const primero = vbTrack.querySelector('video');
+      if (primero) primero.play().catch(() => {});
+    }
   }
 
   function cargarBanner() {
