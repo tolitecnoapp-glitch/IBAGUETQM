@@ -98,9 +98,9 @@ img, svg, video { display: block; }
   box-shadow: 0 1px 0 rgba(16, 26, 48, .06), 0 10px 22px -14px rgba(16, 26, 48, .3);
 }
 .topbar__inner {
-  height: 100px;
+  height: 98px;
   display: flex; align-items: center;
-  padding: 2px clamp(8px, 2vw, 16px);
+  padding: 1px clamp(8px, 2vw, 16px);
 }
 .brand { display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%; }
 .brand__logo {
@@ -819,6 +819,79 @@ img, svg, video { display: block; }
 .install-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
 /* ==========================================================
+   BANNER HORIZONTAL DE VIDEOS (Supabase)
+   Mismo ancho que los botones, más alto. Solo se ve si hay videos.
+   ========================================================== */
+.vbanner {
+  width: 100%; max-width: 652px;
+  margin: 18px auto 0;
+  padding: 0 16px;
+}
+.vbanner__track {
+  display: flex; gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 2px 10px;
+}
+.vbanner__track::-webkit-scrollbar { display: none; }
+.vbanner__card {
+  position: relative; flex: 0 0 86%;
+  height: 190px;
+  border-radius: 22px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  background: #101a30;
+  box-shadow: 0 7px 0 var(--edge), 0 22px 28px -14px rgba(16, 26, 48, .38);
+  border: 1px solid rgba(16, 26, 48, .06);
+}
+.vbanner__card video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  background: #101a30;
+}
+.vbanner__shade {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(7,12,24,0) 45%, rgba(7,12,24,.72) 100%);
+  pointer-events: none;
+}
+.vbanner__meta {
+  position: absolute; left: 14px; right: 14px; bottom: 12px;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 10px;
+  color: #fff;
+}
+.vbanner__title {
+  margin: 0; font-size: 14px; font-weight: 700; line-height: 1.3;
+  text-shadow: 0 2px 10px rgba(0,0,0,.6);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.vbanner__play {
+  flex: none;
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--brand); color: var(--ink);
+  box-shadow: 0 4px 0 rgba(122,86,0,.35);
+}
+.vbanner__play svg { width: 18px; height: 18px; margin-left: 2px; }
+.vbanner__dots { display: flex; justify-content: center; gap: 6px; padding-top: 2px; }
+.vbanner__dots span { width: 7px; height: 7px; border-radius: 99px; background: rgba(16,26,48,.18); transition: width .2s ease, background .2s ease; }
+.vbanner__dots span.is-on { width: 22px; background: var(--ink); }
+.vbanner__card.is-playing .vbanner__play { background: #fff; }
+
+/* ==========================================================
+   SOLO WEB: 2 columnas (móvil queda tal cual)
+   ========================================================== */
+@media (min-width: 768px) {
+  .main { max-width: 980px; }
+  .services { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vbanner { max-width: 980px; }
+  .vbanner__card { flex-basis: 48%; height: 220px; }
+  .pull { max-width: 980px; }
+}
+
+/* ==========================================================
    MENOS MOVIMIENTO (preferencia del sistema)
    ========================================================== */
 @media (prefers-reduced-motion: reduce) {
@@ -865,6 +938,12 @@ img, svg, video { display: block; }
       </span>
     </button>
   </div>
+</section>
+
+<!-- ===================== BANNER HORIZONTAL DE VIDEOS (Supabase) ===================== -->
+<section class="vbanner" id="vbanner" aria-label="Videos destacados" hidden>
+  <div class="vbanner__track" id="vbannerTrack"></div>
+  <div class="vbanner__dots" id="vbannerDots" aria-hidden="true"></div>
 </section>
 
 <!-- ===================== BOTONES DE SERVICIOS =====================
@@ -1872,6 +1951,88 @@ if (USAR_EN_VIVO) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
     });
   }
+
+  /* ==========================================================
+     BANNER HORIZONTAL DE VIDEOS (Supabase)
+     Tabla: banner_videos (ver SQL entregado).
+     Si no hay conexión o la tabla está vacía, se muestran 5 de muestra.
+     ========================================================== */
+  const SUPABASE_URL = 'https://gwrzgesanxvlxlfevqsc.supabase.co/rest/v1/';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3cnpnZXNhbnh2bHhsZmV2cXNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ4MDkyOTIsImV4cCI6MjExMDM4NTI5Mn0.kN4A6CtKggNrQ2xYG7Hs40-u-E3kDv4FNMxPOhNPhZs';
+  const vbanner = $('vbanner'), vbTrack = $('vbannerTrack'), vbDots = $('vbannerDots');
+
+  const VIDEOS_MUESTRA = [
+    { titulo: 'Ibagué desde el aire', video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
+    { titulo: 'Descubre el Tolima', video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4' },
+    { titulo: 'Comercio local', video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4' },
+    { titulo: 'Turismo y cultura', video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4' },
+    { titulo: 'Entretenimiento', video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4' }
+  ];
+
+  function pintarBanner(lista) {
+    if (!lista || !lista.length) { vbanner.hidden = true; return; }
+    vbanner.hidden = false;
+    vbTrack.innerHTML = '';
+    vbDots.innerHTML = '';
+    lista.forEach((v, i) => {
+      const card = document.createElement('article');
+      card.className = 'vbanner__card';
+      const video = document.createElement('video');
+      video.src = v.video_url;
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.preload = 'metadata';
+      video.setAttribute('playsinline', '');
+      if (v.poster_url) video.poster = v.poster_url;
+      const shade = document.createElement('div');
+      shade.className = 'vbanner__shade';
+      const meta = document.createElement('div');
+      meta.className = 'vbanner__meta';
+      const titulo = document.createElement('p');
+      titulo.className = 'vbanner__title';
+      titulo.textContent = v.titulo || 'Video destacado';
+      const play = document.createElement('span');
+      play.className = 'vbanner__play';
+      play.setAttribute('aria-hidden', 'true');
+      play.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5.2v13.6a.6.6 0 0 0 .92.5l10.4-6.8a.6.6 0 0 0 0-1L8.92 4.7A.6.6 0 0 0 8 5.2z"/></svg>';
+      meta.appendChild(titulo);
+      meta.appendChild(play);
+      card.appendChild(video);
+      card.appendChild(shade);
+      card.appendChild(meta);
+      card.addEventListener('click', () => {
+        if (video.paused) { video.play().catch(() => {}); card.classList.add('is-playing'); }
+        else { video.pause(); card.classList.remove('is-playing'); }
+      });
+      video.addEventListener('pause', () => card.classList.remove('is-playing'));
+      video.addEventListener('play', () => card.classList.add('is-playing'));
+      vbTrack.appendChild(card);
+      const dot = document.createElement('span');
+      if (i === 0) dot.className = 'is-on';
+      vbDots.appendChild(dot);
+    });
+    vbTrack.addEventListener('scroll', () => {
+      const cards = vbTrack.children;
+      if (!cards.length) return;
+      const w = cards[0].getBoundingClientRect().width + 12;
+      const idx = Math.round(vbTrack.scrollLeft / w);
+      Array.prototype.forEach.call(vbDots.children, (d, i) => d.classList.toggle('is-on', i === idx));
+    }, { passive: true });
+  }
+
+  function cargarBanner() {
+    fetch(SUPABASE_URL + 'banner_videos?select=id,titulo,video_url,poster_url,orden,activo&activo=eq.true&order=orden.asc', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    })
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(d => {
+        if (Array.isArray(d) && d.length) pintarBanner(d);
+        else pintarBanner(VIDEOS_MUESTRA);
+      })
+      .catch(() => pintarBanner(VIDEOS_MUESTRA));
+  }
+  cargarBanner();
 
   /* ==========================================================
      INICIO
