@@ -71,16 +71,16 @@ img, svg, video { display: block; }
   box-shadow: 0 1px 0 rgba(16, 26, 48, .06), 0 10px 22px -14px rgba(16, 26, 48, .3);
 }
 .topbar__inner {
-  height: 62px;
+  height: 108px;
   display: flex; align-items: center;
-  padding: 0 clamp(14px, 4vw, 32px);
+  padding: 6px clamp(8px, 2vw, 16px);
 }
-.brand { display: flex; align-items: center; height: 100%; }
+.brand { display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; }
 .brand__logo {
-  height: 56px; width: auto; max-width: min(74vw, 340px);
+  height: 96px; width: 100%; max-width: 100%;
   object-fit: contain;
   opacity: 0;
-  transform-origin: left center;
+  transform-origin: center center;
 }
 .brand__logo.is-in { animation: logoIn .8s cubic-bezier(.22, 1, .36, 1) .05s both; }
 
@@ -681,6 +681,59 @@ img, svg, video { display: block; }
 }
 
 /* ==========================================================
+   VISTA EMBEBIDA (iframe dentro de la app, animada)
+   ========================================================== */
+.embed-overlay {
+  position: fixed; inset: 0; z-index: 90;
+  display: flex; flex-direction: column;
+  background: #fff;
+  opacity: 0;
+  transform: translateY(28px) scale(.985);
+  transition: opacity .28s ease, transform .32s cubic-bezier(.22, 1, .36, 1);
+  will-change: transform, opacity;
+}
+.embed-overlay.is-open { opacity: 1; transform: none; }
+.embed-overlay__bar {
+  flex: none;
+  display: flex; align-items: center; gap: 10px;
+  padding: calc(10px + env(safe-area-inset-top)) 12px 10px;
+  background: #fff;
+  border-bottom: 1px solid rgba(16, 26, 48, .08);
+  box-shadow: 0 8px 20px -14px rgba(16, 26, 48, .35);
+}
+.embed-overlay__back {
+  flex: none;
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  padding: 0;
+  background: var(--page);
+  border: 1px solid rgba(16, 26, 48, .08);
+  border-radius: 50%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .15s ease, transform .15s ease;
+}
+.embed-overlay__back:active { transform: scale(.92); }
+.embed-overlay__back svg { width: 20px; height: 20px; }
+.embed-overlay__title {
+  margin: 0; flex: 1 1 auto; min-width: 0;
+  font-size: 15px; font-weight: 700; line-height: 1.2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.embed-overlay__frame {
+  flex: 1 1 auto; min-height: 0;
+  width: 100%; border: 0;
+  background: #fff;
+}
+.embed-overlay__load {
+  flex: none;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  font-size: 12.5px; font-weight: 500; color: var(--muted);
+}
+.embed-overlay__load .dot { background: var(--brand); }
+
+/* ==========================================================
    MENOS MOVIMIENTO (preferencia del sistema)
    ========================================================== */
 @media (prefers-reduced-motion: reduce) {
@@ -735,7 +788,7 @@ img, svg, video { display: block; }
   <nav aria-label="Servicios de la ciudad">
     <ul class="services">
       <li style="--i:0">
-        <button class="svc" type="button">
+        <button class="svc" type="button" id="btnTaxis" data-accion="externo" data-url="https://tolitecnoapp-glitch.github.io/TOLITECNO/">
           <span class="svc__icon"><img src="https://i.imgur.com/9f8mXAn.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
           <span class="svc__text">
             <span class="svc__title">Taxis seguros</span>
@@ -745,7 +798,7 @@ img, svg, video { display: block; }
         </button>
       </li>
       <li style="--i:1">
-        <button class="svc" type="button">
+        <button class="svc" type="button" id="btnComercio" data-accion="embebido" data-titulo="Comercio local" data-url="https://whitecarappcelphone-sys.github.io/ibaguetqmmultiservices/">
           <span class="svc__icon"><img src="https://i.imgur.com/HUXQEd3.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
           <span class="svc__text">
             <span class="svc__title">Comercio local</span>
@@ -755,7 +808,7 @@ img, svg, video { display: block; }
         </button>
       </li>
       <li style="--i:2">
-        <button class="svc" type="button">
+        <button class="svc" type="button" id="btnTurismo" data-accion="embebido" data-titulo="Turismo" data-url="https://chat.z.ai/space/e1m1r568prm0-art">
           <span class="svc__icon"><img src="https://i.imgur.com/507A6oh.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
           <span class="svc__text">
             <span class="svc__title">Turismo</span>
@@ -765,7 +818,7 @@ img, svg, video { display: block; }
         </button>
       </li>
       <li style="--i:3">
-        <button class="svc" type="button">
+        <button class="svc" type="button" id="btnHogar" data-accion="navegar" data-url="https://tolitecnoapp-glitch.github.io/IBAGUETQM/hogar.html">
           <span class="svc__icon"><img src="https://i.imgur.com/YWF4kkG.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
           <span class="svc__text">
             <span class="svc__title">Hogar y reparaciones</span>
@@ -775,7 +828,7 @@ img, svg, video { display: block; }
         </button>
       </li>
       <li style="--i:4">
-        <button class="svc" type="button">
+        <button class="svc" type="button" id="btnEntretenimiento" data-accion="embebido" data-titulo="Entretenimiento" data-url="https://ibaguetequiero.lovable.app/">
           <span class="svc__icon"><img src="https://i.imgur.com/ZHnliek.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
           <span class="svc__text">
             <span class="svc__title">Entretenimiento</span>
@@ -785,7 +838,7 @@ img, svg, video { display: block; }
         </button>
       </li>
       <li style="--i:5">
-        <button class="svc" type="button">
+        <button class="svc" type="button" id="btnDomicilios" data-accion="embebido" data-titulo="Domicilios" data-url="https://whitecarappcelphone-sys.github.io/ibaguetqmmultiservices/">
           <span class="svc__icon"><img src="https://i.imgur.com/KGS6N4i.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
           <span class="svc__text">
             <span class="svc__title">Domicilios</span>
@@ -795,7 +848,7 @@ img, svg, video { display: block; }
         </button>
       </li>
       <li style="--i:6">
-        <button class="svc" type="button">
+        <button class="svc" type="button" id="btnArcade" data-accion="navegar" data-url="https://tolitecnoapp-glitch.github.io/IBAGUETQM/kids.html">
           <span class="svc__icon"><img src="https://i.imgur.com/r9OCkLg.png" alt="" width="80" height="80" referrerpolicy="no-referrer" decoding="async"></span>
           <span class="svc__text">
             <span class="svc__title">Zona arcade</span>
@@ -807,6 +860,18 @@ img, svg, video { display: block; }
     </ul>
   </nav>
 </main>
+
+<!-- ===================== VISTA EMBEBIDA ===================== -->
+<div class="embed-overlay" id="embedOverlay" hidden aria-hidden="true">
+  <div class="embed-overlay__bar">
+    <button class="embed-overlay__back" id="embedBack" type="button" aria-label="Volver">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 6-6 6 6 6"/></svg>
+    </button>
+    <h2 class="embed-overlay__title" id="embedTitle">Servicio</h2>
+  </div>
+  <iframe class="embed-overlay__frame" id="embedFrame" title="Servicio embebido" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allow="fullscreen; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  <div class="embed-overlay__load" id="embedLoad"><span class="dot"></span><span>Cargando servicio…</span></div>
+</div>
 
 <!-- ===================== MODAL DEL CLIMA ===================== -->
 <div class="wx-overlay" id="wxOverlay" hidden>
@@ -1176,13 +1241,75 @@ if (USAR_EN_VIVO) {
 
   /* ==========================================================
      BOTONES DE SERVICIOS
-     Todavía no realizan ninguna acción. Aquí solo se oculta la
-     imagen si algún icono no llega a cargar.
+     - externo: abre fuera de la app (nueva pestaña).
+     - embebido: abre organizado y animado dentro de la app (iframe).
+     - navegar: va a la página indicada del mismo repositorio.
      ========================================================== */
   document.querySelectorAll('.svc__icon img').forEach(img => {
     const ocultar = () => { img.style.visibility = 'hidden'; };
     if (img.complete && !img.naturalWidth) ocultar();
     else img.addEventListener('error', ocultar, { once: true });
+  });
+
+  /* --- Vista embebida (iframe organizado y animado) --- */
+  const embedOverlay = $('embedOverlay'), embedFrame = $('embedFrame'),
+        embedTitle = $('embedTitle'), embedBack = $('embedBack'), embedLoad = $('embedLoad');
+  let embedAbierto = false, embedUltimoFoco = null, embedCierreT = 0;
+
+  function abrirEmbebido(url, titulo) {
+    if (!url) return;
+    embedAbierto = true;
+    clearTimeout(embedCierreT);
+    embedUltimoFoco = document.activeElement;
+    embedTitle.textContent = titulo || 'Servicio';
+    embedLoad.hidden = false;
+    embedOverlay.hidden = false;
+    embedOverlay.setAttribute('aria-hidden', 'false');
+    void embedOverlay.offsetWidth;
+    embedOverlay.classList.add('is-open');
+    raiz.style.overflow = 'hidden';
+    if (embedFrame.dataset.src !== url) {
+      embedFrame.dataset.src = url;
+      embedFrame.src = url;
+    }
+    embedBack.focus({ preventScroll: true });
+  }
+
+  function cerrarEmbebido() {
+    if (!embedAbierto) return;
+    embedAbierto = false;
+    embedOverlay.classList.remove('is-open');
+    embedCierreT = setTimeout(() => {
+      if (embedAbierto) return;
+      embedOverlay.hidden = true;
+      embedOverlay.setAttribute('aria-hidden', 'true');
+      raiz.style.overflow = '';
+      embedFrame.removeAttribute('src');
+      delete embedFrame.dataset.src;
+    }, 300);
+    if (embedUltimoFoco && typeof embedUltimoFoco.focus === 'function') embedUltimoFoco.focus({ preventScroll: true });
+  }
+
+  embedBack.addEventListener('click', cerrarEmbebido);
+  embedFrame.addEventListener('load', () => { embedLoad.hidden = true; });
+
+  document.addEventListener('keydown', e => {
+    if (embedAbierto && e.key === 'Escape') { e.preventDefault(); cerrarEmbebido(); }
+  });
+
+  document.querySelectorAll('.svc[data-accion]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const accion = btn.dataset.accion;
+      const url = btn.dataset.url;
+      if (!url) return;
+      if (accion === 'externo') {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } else if (accion === 'embebido') {
+        abrirEmbebido(url, btn.dataset.titulo || '');
+      } else if (accion === 'navegar') {
+        window.location.href = url;
+      }
+    });
   });
 
   /* ==========================================================
@@ -1330,12 +1457,14 @@ if (USAR_EN_VIVO) {
   function reproducirVideo() {
     if (!abierto || !videoActivo || !escena) return;
     video.preload = 'auto';
+    video.playbackRate = 1.5;
     montarVideo();
     const p = video.play();
     if (p && typeof p.catch === 'function') p.catch(() => {});
   }
 
   video.muted = true;
+  video.playbackRate = 1.5;
   video.addEventListener('playing', () => {
     video.classList.add('is-on');
     if (video.dataset.escena && video.currentSrc) videoBueno[video.dataset.escena] = video.currentSrc;
