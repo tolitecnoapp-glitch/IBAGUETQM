@@ -1,27 +1,32 @@
-const CACHE_NAME = 'ibague-tqm-v1';
-const CORE_ASSETS = [
+/* Ibagué · Servicios de la ciudad — Service Worker
+   Repo: https://tolitecnoapp-glitch.github.io/IBAGUETQM/
+   Estrategia: cache-first para la app shell, red primero para el resto.
+*/
+const CACHE = 'ibague-v1';
+const APP_SHELL = [
   './',
-  'index.html',
-  'manifest.json',
-  'icon-192.png',
-  'icon-512.png'
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
+  './hogar.html',
+  './kids.html'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(CORE_ASSETS).catch(() => {});
-    }).then(() => self.skipWaiting())
+    caches.open(CACHE)
+      .then(cache => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting())
+      .catch(() => {})
   );
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
-        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-      );
-    }).then(() => self.clients.claim())
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
@@ -31,34 +36,34 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(req.url);
 
-  // Bypass cache for weather API, live RSS, and video streams
-  if (
-    url.hostname.includes('open-meteo.com') ||
-    url.hostname.includes('rss2json.com') ||
-    url.hostname.includes('videos.pexels.com') ||
-    req.headers.get('range')
-  ) {
-    return;
-  }
+  // Solo se maneja el mismo origen (el repo); el resto va directo a red
+  if (url.origin !== self.location.origin) return;
 
-  // Network first with cache fallback for HTML pages
+  // Navegaciones (HTML): red primero, respaldo a caché
   if (req.mode === 'navigate') {
     event.respondWith(
-      fetch(req).catch(() => caches.match('index.html'))
+      fetch(req)
+        .then(res => {
+          const copia = res.clone();
+          caches.open(CACHE).then(cache => cache.put(req, copia)).catch(() => {});
+          return res;
+        })
+        .catch(() => caches.match(req).then(hit => hit || caches.match('./index.html')))
     );
     return;
   }
 
-  // Cache first with network fallback for static resources
+  // Recursos estáticos: caché primero, luego red y se guarda
   event.respondWith(
-    caches.match(req).then(cached => {
-      if (cached) return cached;
-      return fetch(req).then(res => {
-        if (!res || res.status !== 200 || res.type !== 'basic') return res;
-        const resClone = res.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(req, resClone)).catch(() => {});
-        return res;
-      }).catch(() => {});
+    caches.match(req).then(hit => {
+      if (hit) return hit;
+      return fetch(req)
+        .then(res => {
+          const copia = res.clone();
+          caches.open(CACHE).then(cache => cache.put(req, copia)).catch(() => {});
+          return res;
+        })
+        .catch(() => hit);
     })
   );
 });
