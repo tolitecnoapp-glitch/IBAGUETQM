@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="es" data-lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CESAR DIAZ KIDS — Doce juegos para aprender jugando</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cielo:#3FB6E8;
+    --cielo-d:#2695C4;
+    --sol:#FFC93C;
+    --sol-d:#E8A800;
+    --fresa:#FF6B7A;
+    --fresa-d:#E84C5C;
+    --menta:#33C9A3;
+    --menta-d:#209E7D;
+    --uva:#9B6BFF;
+    --uva-d:#7C46EA;
+    --crema:#FFF9EE;
+    --crema2:#FFF2DC;
+    --tinta:#2B2250;
+    --tinta-soft:#5B527A;
+    --blanco:#FFFFFF;
+    --radius:26px;
+    --shadow: 0 10px 0 rgba(43,34,80,0.10), 0 16px 30px rgba(43,34,80,0.14);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:'Nunito', sans-serif;
+    background:
+      radial-gradient(circle at 8% 12%, rgba(63,182,232,0.18), transparent 40%),
+      radial-gradient(circle at 92% 18%, rgba(255,201,60,0.22), transparent 42%),
+      radial-gradient(circle at 15% 92%, rgba(255,107,122,0.16), transparent 40%),
+      var(--crema);
+    color:var(--tinta);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  h1,h2,h3, .display{ font-family:'Baloo 2', sans-serif; }
+  button{ font-family:'Nunito', sans-serif; cursor:pointer; }
+  .visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  a{ color:inherit; }
+
+  /* ---------- HEADER ---------- */
+  header.top{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px clamp(16px,4vw,48px);
+    gap:16px; flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:14px; }
+  .brand-mark{ width:56px; height:56px; flex:none; }
+  .brand-text .name{
+    font-family:'Baloo 2', sans-serif; font-weight:800; font-size:clamp(20px,3.4vw,28px);
+    color:var(--tinta); letter-spacing:0.5px; line-height:1;
+  }
+  .brand-text .name span{ color:var(--fresa); }
+  .brand-text .tag{ font-weight:700; color:var(--tinta-soft); font-size:14px; margin-top:2px; }
+
+  .lang-toggle{
+    display:flex; align-items:center; gap:8px; background:var(--blanco);
+    border-radius:999px; padding:6px; box-shadow:var(--shadow);
+  }
+  .lang-toggle button{
+    border:none; background:transparent; font-weight:800; font-size:15px;
+    padding:9px 16px; border-radius:999px; color:var(--tinta-soft); transition:all .2s ease;
+  }
+  .lang-toggle button.active{ background:var(--uva); color:#fff; box-shadow:0 4px 0 var(--uva-d); }
+
+  main{ padding:0 clamp(16px,4vw,48px) 60px; max-width:1180px; margin:0 auto; }
+
+  /* ---------- HOME / HERO ---------- */
+  .hero{
+    display:flex; align-items:center; gap:28px; justify-content:space-between;
+    padding:18px 8px 8px; flex-wrap:wrap;
+  }
+  .hero-copy{ flex:1 1 380px; }
+  .hero-copy h1{ font-size:clamp(28px,5vw,44px); margin:0 0 8px; line-height:1.05; }
+  .hero-copy p{ font-size:clamp(15px,2vw,18px); color:var(--tinta-soft); font-weight:700; max-width:46ch; margin:0; }
+  .hero-mascot{ width:min(220px,38vw); flex:none; }
+
+  .cards-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr));
+    gap:18px; margin-top:26px;
+  }
+  .game-card{
+    position:relative; background:var(--blanco); border:none; border-radius:var(--radius);
+    padding:20px 16px 18px; text-align:left; box-shadow:var(--shadow);
+    display:flex; flex-direction:column; gap:10px; transition:transform .18s ease, box-shadow .18s ease;
+    overflow:hidden;
+  }
+  .game-card::before{
+    content:""; position:absolute; inset:0; opacity:0.10; background:var(--accent); border-radius:var(--radius);
+  }
+  .game-card:hover, .game-card:focus-visible{ transform:translateY(-6px) rotate(-0.6deg); box-shadow:0 14px 0 rgba(43,34,80,0.12), 0 22px 34px rgba(43,34,80,0.18); }
+  .game-card:active{ transform:translateY(-1px); }
+  .card-icon{
+    width:58px; height:58px; border-radius:18px; background:var(--accent); display:flex; align-items:center; justify-content:center;
+    font-size:28px; box-shadow:0 5px 0 var(--accent-d); flex:none; position:relative; z-index:1;
+  }
+  .card-title{ font-weight:800; font-size:17px; position:relative; z-index:1; }
+  .card-desc{ font-size:13.5px; color:var(--tinta-soft); font-weight:700; position:relative; z-index:1; line-height:1.35; }
+  .card-play{
+    align-self:flex-start; margin-top:auto; font-weight:800; font-size:13px; color:var(--accent-d);
+    display:flex; align-items:center; gap:4px; position:relative; z-index:1;
+  }
+
+  footer.credit{ text-align:center; padding:30px 16px 40px; color:var(--tinta-soft); font-weight:700; font-size:13px; }
+
+  /* ---------- GAME SCREEN ---------- */
+  #game-screen{ padding-top:6px; }
+  .game-topbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
+  .back-btn{
+    display:flex; align-items:center; gap:8px; background:var(--blanco); border:none; border-radius:999px;
+    padding:10px 18px 10px 14px; font-weight:800; box-shadow:var(--shadow); color:var(--tinta); font-size:14px;
+  }
+  .back-btn:hover{ background:var(--crema2); }
+  .score-pill{
+    display:flex; align-items:center; gap:8px; background:var(--tinta); color:#fff; border-radius:999px;
+    padding:9px 18px; font-weight:800; font-size:14px; box-shadow:0 6px 0 rgba(43,34,80,0.25);
+  }
+  .score-pill .star{ font-size:16px; }
+
+  .game-panel{
+    background:var(--blanco); border-radius:32px; padding:clamp(18px,3vw,34px); margin-top:16px;
+    box-shadow:var(--shadow); position:relative;
+  }
+  .game-panel h2{ margin:0 0 6px; font-size:clamp(22px,3.4vw,30px); }
+  .game-panel .instructions{ color:var(--tinta-soft); font-weight:700; margin:0 0 20px; font-size:15px; max-width:60ch; }
+  #game-area{ min-height:220px; }
+
+  .progress-dots{ display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
+  .progress-dots span{ width:10px; height:10px; border-radius:50%; background:#E7E1F5; display:inline-block; }
+  .progress-dots span.done{ background:var(--menta); }
+  .progress-dots span.current{ background:var(--sol); }
+
+  /* quiz */
+  .quiz-prompt{ text-align:center; font-size:clamp(20px,4vw,26px); font-weight:800; margin-bottom:22px; }
+  .quiz-prompt .big-emoji{ font-size:clamp(52px,10vw,84px); display:block; margin-bottom:6px; line-height:1; }
+  .quiz-options{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:14px; }
+  .option-btn{
+    border:3px solid #EDE7FA; background:var(--crema2); border-radius:20px; padding:16px 10px; font-weight:800; font-size:17px;
+    color:var(--tinta); box-shadow:0 5px 0 #E7DDCB; transition:transform .12s ease;
+  }
+  .option-btn:hover:not(:disabled){ transform:translateY(-3px); border-color:var(--uva); }
+  .option-btn:disabled{ cursor:default; }
+  .option-btn.correct{ background:var(--menta); color:#fff; border-color:var(--menta-d); box-shadow:0 5px 0 var(--menta-d); }
+  .option-btn.incorrect{ background:var(--fresa); color:#fff; border-color:var(--fresa-d); box-shadow:0 5px 0 var(--fresa-d); animation:shake .4s; }
+
+  @keyframes shake{ 10%,90%{transform:translateX(-2px)} 20%,80%{transform:translateX(3px)} 30%,50%,70%{transform:translateX(-5px)} 40%,60%{transform:translateX(5px)} }
+
+  /* hangman */
+  .hangman-wrap{ display:flex; gap:30px; flex-wrap:wrap; align-items:center; justify-content:center; }
+  .hangman-svg{ width:170px; height:190px; flex:none; }
+  .hangman-word{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; font-family:'Baloo 2'; font-size:30px; font-weight:700; letter-spacing:2px; }
+  .hangman-word .slot{ min-width:26px; border-bottom:5px solid var(--tinta); text-align:center; text-transform:uppercase; }
+  .hangman-hint{ font-size:44px; text-align:center; opacity:.9; }
+  .keyboard{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:24px; max-width:640px; margin-left:auto; margin-right:auto; }
+  .key-btn{
+    width:38px; height:42px; border-radius:12px; border:none; background:var(--cielo); color:#fff; font-weight:800; font-size:16px;
+    box-shadow:0 4px 0 var(--cielo-d);
+  }
+  .key-btn:disabled{ opacity:.35; box-shadow:none; transform:translateY(3px); }
+  .key-btn.wrong{ background:var(--fresa); box-shadow:0 4px 0 var(--fresa-d); }
+  .key-btn.right{ background:var(--menta); box-shadow:0 4px 0 var(--menta-d); }
+
+  /* memory */
+  .memory-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; max-width:520px; margin:0 auto; }
+  .mem-card{ aspect-ratio:1/1; border-radius:18px; border:none; background:var(--uva); box-shadow:0 5px 0 var(--uva-d); position:relative; }
+  .mem-card .face{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:clamp(22px,5vw,34px); border-radius:18px; backface-visibility:hidden; transition:transform .3s ease; }
+  .mem-card .front{ background:var(--uva); color:transparent; }
+  .mem-card .front::after{ content:"?"; color:#fff; font-family:'Baloo 2'; font-size:26px; }
+  .mem-card .back{ background:var(--blanco); border:3px solid #EDE7FA; transform:rotateY(180deg); }
+  .mem-card.flipped .front{ transform:rotateY(180deg); }
+  .mem-card.flipped .back{ transform:rotateY(0deg); }
+  .mem-card.matched .back{ background:var(--menta); border-color:var(--menta-d); }
+  .mem-card{ perspective:600px; }
+
+  /* letter rain */
+  .rain-field{ position:relative; height:360px; background:linear-gradient(180deg,#EAF6FD,#FFF9EE); border-radius:22px; overflow:hidden; border:3px dashed #CDEAF5; }
+  .rain-target{ position:absolute; top:10px; left:50%; transform:translateX(-50%); background:var(--tinta); color:#fff; font-weight:800; padding:8px 18px; border-radius:14px; z-index:5; font-size:16px; }
+  .rain-letter{ position:absolute; top:-46px; width:44px; height:44px; border-radius:12px; background:var(--sol); color:var(--tinta); border:none; font-family:'Baloo 2'; font-weight:700; font-size:20px; box-shadow:0 4px 0 var(--sol-d); animation-name:fall; animation-timing-function:linear; }
+  @keyframes fall{ from{ transform:translateY(0);} to{ transform:translateY(410px);} }
+  .rain-timer{ position:absolute; bottom:10px; left:10px; background:#fff; padding:6px 14px; border-radius:999px; font-weight:800; font-size:14px; z-index:5; box-shadow:var(--shadow); }
+  .rain-caught{ position:absolute; bottom:10px; right:10px; background:#fff; padding:6px 14px; border-radius:999px; font-weight:800; font-size:14px; z-index:5; box-shadow:var(--shadow); }
+
+  /* unscramble */
+  .unscramble-hint{ text-align:center; font-size:60px; margin-bottom:6px; }
+  .unscramble-slot{ display:flex; gap:8px; justify-content:center; margin:14px 0 22px; flex-wrap:wrap; min-height:52px; }
+  .unscramble-slot .slot-tile{ width:44px; height:48px; border-radius:12px; background:var(--crema2); border:3px solid #EDE7FA; display:flex; align-items:center; justify-content:center; font-family:'Baloo 2'; font-weight:700; font-size:20px; text-transform:uppercase; }
+  .unscramble-tiles{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .letter-tile{ width:48px; height:52px; border-radius:14px; background:var(--fresa); color:#fff; border:none; font-family:'Baloo 2'; font-weight:700; font-size:22px; text-transform:uppercase; box-shadow:0 5px 0 var(--fresa-d); }
+  .letter-tile:disabled{ opacity:.25; }
+  .unscramble-actions{ text-align:center; margin-top:18px; }
+  .ghost-btn{ background:none; border:2px solid var(--tinta-soft); color:var(--tinta-soft); font-weight:800; padding:8px 18px; border-radius:999px; font-size:14px; }
+
+  /* feedback overlay */
+  #feedback-overlay{
+    position:fixed; inset:0; background:rgba(43,34,80,0.55); display:none; align-items:center; justify-content:center; z-index:50; padding:20px;
+  }
+  #feedback-overlay.show{ display:flex; }
+  .feedback-card{ background:#fff; border-radius:30px; padding:34px 30px; max-width:380px; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.3); position:relative; overflow:visible; }
+  .feedback-mascot{ width:130px; margin:0 auto 6px; }
+  .feedback-card h3{ margin:6px 0 4px; font-size:26px; }
+  .feedback-card p{ color:var(--tinta-soft); font-weight:700; margin:0 0 20px; }
+  .feedback-actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .primary-btn{ background:var(--uva); color:#fff; border:none; border-radius:999px; padding:12px 24px; font-weight:800; font-size:15px; box-shadow:0 5px 0 var(--uva-d); }
+  .secondary-btn{ background:var(--crema2); color:var(--tinta); border:none; border-radius:999px; padding:12px 24px; font-weight:800; font-size:15px; }
+
+  .confetti-piece{ position:absolute; top:-10px; width:10px; height:14px; border-radius:2px; animation:confetti-fall 1.4s ease-in forwards; }
+  @keyframes confetti-fall{ to{ transform:translateY(300px) rotate(400deg); opacity:0; } }
+
+  /* mascot mood classes control mouth/eyes visibility, defined via JS toggling data-mood on svg */
+  svg[data-mood] .mouth-idle, svg[data-mood] .mouth-happy, svg[data-mood] .mouth-sad{ display:none; }
+  svg[data-mood="idle"] .mouth-idle{ display:inline; }
+  svg[data-mood="happy"] .mouth-happy{ display:inline; }
+  svg[data-mood="sad"] .mouth-sad{ display:inline; }
+  .mascot-bounce{ animation:mascot-bounce 1.8s ease-in-out infinite; }
+  @keyframes mascot-bounce{ 0%,100%{ transform:translateY(0) rotate(0deg);} 50%{ transform:translateY(-8px) rotate(-2deg);} }
+  .mascot-jump{ animation:mascot-jump .6s ease; }
+  @keyframes mascot-jump{ 0%{transform:translateY(0) scale(1);} 30%{transform:translateY(-22px) scale(1.05);} 60%{transform:translateY(4px) scale(.98);} 100%{transform:translateY(0) scale(1);} }
+  .mascot-droop{ animation:mascot-droop .5s ease; }
+  @keyframes mascot-droop{ 0%{transform:translateY(0) rotate(0);} 50%{transform:translateY(4px) rotate(4deg);} 100%{transform:translateY(0) rotate(2deg);} }
+  .blink-eye{ animation:blink 4.2s infinite; transform-origin:center; }
+  @keyframes blink{ 0%,92%,100%{ transform:scaleY(1);} 95%{ transform:scaleY(0.1);} }
+
+  [hidden]{ display:none !important; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+
+  @media (max-width:640px){
+    .hero{ flex-direction:column-reverse; text-align:center; }
+    .hero-copy p{ margin:0 auto; }
+    .memory-grid{ grid-template-columns:repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="46" fill="var(--sol)"/>
+      <path d="M25 60 Q50 85 75 60 Q65 40 50 40 Q35 40 25 60Z" fill="var(--fresa)"/>
+      <circle cx="38" cy="45" r="6" fill="#fff"/>
+      <circle cx="62" cy="45" r="6" fill="#fff"/>
+      <circle cx="38" cy="45" r="3" fill="var(--tinta)"/>
+      <circle cx="62" cy="45" r="3" fill="var(--tinta)"/>
+    </svg>
+    <div class="brand-text">
+      <div class="name">CESAR DIAZ <span>KIDS</span></div>
+      <div class="tag" data-i18n="appSubtitle"></div>
+    </div>
+  </div>
+  <div class="lang-toggle" role="group" aria-label="Idioma / Language">
+    <button id="lang-es" class="active" onclick="setLang('es')">🇪🇸 ES</button>
+    <button id="lang-en" onclick="setLang('en')">🇬🇧 EN</button>
+  </div>
+</header>
+
+<main>
+  <section id="home">
+    <div class="hero">
+      <div class="hero-copy">
+        <h1 data-i18n="heroTitle"></h1>
+        <p data-i18n="heroText"></p>
+      </div>
+      <div class="hero-mascot" id="hero-mascot-slot"></div>
+    </div>
+    <div class="cards-grid" id="cards-grid"></div>
+  </section>
+
+  <section id="game-screen" hidden>
+    <div class="game-topbar">
+      <button class="back-btn" onclick="closeGame()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-i18n="back"></span>
+      </button>
+      <div class="score-pill"><span class="star">⭐</span><span id="score-value">0</span> <span data-i18n="score"></span></div>
+    </div>
+    <div class="game-panel">
+      <h2 id="game-title"></h2>
+      <p class="instructions" id="game-instructions"></p>
+      <div class="progress-dots" id="progress-dots"></div>
+      <div id="game-area"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="credit">CESAR DIAZ KIDS · <span data-i18n="footerText"></span></footer>
+
+<div id="feedback-overlay">
+  <div class="feedback-card" id="feedback-card">
+    <div class="feedback-mascot" id="feedback-mascot-slot"></div>
+    <h3 id="feedback-title"></h3>
+    <p id="feedback-text"></p>
+    <div class="feedback-actions" id="feedback-actions"></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CESAR DIAZ KIDS — motor del juego
+   ========================================================= */
+
+/* ---------- i18n ---------- */
+const I18N = {
+  es:{
+    appSubtitle:"Doce juegos para aprender jugando",
+    heroTitle:"¡Bienvenido a CESAR DIAZ KIDS!",
+    heroText:"Doce juegos pensados para los peques de la casa (4 a 9 años): memoria, palabras, matemáticas y abecedario. ¡A jugar y aprender!",
+    footerText:"Hecho con cariño para los peques de la casa.",
+    back:"Volver", score:"puntos", play:"Jugar", next:"Siguiente",
+    tryAgain:"Inténtalo de nuevo", playAgain:"Jugar otra vez", backToMenu:"Volver al menú",
+    correctTitle:"¡Correcto!", incorrectTitle:"¡Casi!",
+    sessionDoneTitle:"¡Genial!", sessionDoneText:"Has terminado con {score} puntos.",
+    check:"Comprobar", clear:"Borrar",
+    howManyCorrect:"¡Lo lograste!",
+    games:{
+      hangman:{ title:"Ahorcado", desc:"Adivina la palabra letra a letra.", instructions:"Elige letras para descubrir la palabra escondida antes de que se complete el dibujo." },
+      memory:{ title:"Memoria", desc:"Encuentra las parejas iguales.", instructions:"Da la vuelta a las cartas y encuentra todas las parejas iguales." },
+      matchword:{ title:"Empareja la palabra", desc:"Une cada dibujo con su palabra.", instructions:"Mira el dibujo y elige la palabra que lo nombra." },
+      firstletter:{ title:"Primera letra", desc:"¿Con qué letra empieza?", instructions:"Fíjate en el dibujo y elige la primera letra de su nombre." },
+      sums:{ title:"Sumas", desc:"Practica sumas sencillas.", instructions:"Resuelve la suma y elige la respuesta correcta." },
+      subtract:{ title:"Restas", desc:"Practica restas sencillas.", instructions:"Resuelve la resta y elige la respuesta correcta." },
+      multiply:{ title:"Multiplicación", desc:"Practica tablas fáciles.", instructions:"Resuelve la multiplicación y elige la respuesta correcta." },
+      rain:{ title:"Lluvia de letras", desc:"Atrapa la letra correcta.", instructions:"Toca solo las letras que coincidan con la letra objetivo antes de que caigan." },
+      drawing:{ title:"¿Qué es este dibujo?", desc:"Adivina el dibujo.", instructions:"Observa el dibujo y elige qué representa." },
+      alphabet:{ title:"Abecedario", desc:"Ordena las letras.", instructions:"Descubre qué letra falta en la serie del abecedario." },
+      unscramble:{ title:"Ordena la palabra", desc:"Forma la palabra correcta.", instructions:"Toca las letras en el orden correcto para formar la palabra del dibujo." },
+      counting:{ title:"Cuenta y suma", desc:"Cuenta los dibujos.", instructions:"Cuenta cuántos dibujos hay y elige el número correcto." }
+    }
+  },
+  en:{
+    appSubtitle:"Twelve games to learn while playing",
+    heroTitle:"Welcome to CESAR DIAZ KIDS!",
+    heroText:"Twelve games designed for little ones (ages 4 to 9): memory, words, math and the alphabet. Time to play and learn!",
+    footerText:"Made with love for the little ones at home.",
+    back:"Back", score:"points", play:"Play", next:"Next",
+    tryAgain:"Try again", playAgain:"Play again", backToMenu:"Back to menu",
+    correctTitle:"Correct!", incorrectTitle:"Almost!",
+    sessionDoneTitle:"Great job!", sessionDoneText:"You finished with {score} points.",
+    check:"Check", clear:"Clear",
+    howManyCorrect:"You did it!",
+    games:{
+      hangman:{ title:"Hangman", desc:"Guess the word letter by letter.", instructions:"Pick letters to reveal the hidden word before the drawing is complete." },
+      memory:{ title:"Memory", desc:"Find the matching pairs.", instructions:"Flip the cards and find all the matching pairs." },
+      matchword:{ title:"Match the word", desc:"Match each picture with its word.", instructions:"Look at the picture and choose the word that names it." },
+      firstletter:{ title:"First letter", desc:"Which letter does it start with?", instructions:"Look at the picture and choose the first letter of its name." },
+      sums:{ title:"Addition", desc:"Practice simple addition.", instructions:"Solve the sum and choose the correct answer." },
+      subtract:{ title:"Subtraction", desc:"Practice simple subtraction.", instructions:"Solve the subtraction and choose the correct answer." },
+      multiply:{ title:"Multiplication", desc:"Practice easy tables.", instructions:"Solve the multiplication and choose the correct answer." },
+      rain:{ title:"Letter rain", desc:"Catch the right letter.", instructions:"Tap only the letters that match the target letter before they fall." },
+      drawing:{ title:"What is this drawing?", desc:"Guess the drawing.", instructions:"Look at the drawing and choose what it shows." },
+      alphabet:{ title:"Alphabet", desc:"Put the letters in order.", instructions:"Find out which letter is missing from the alphabet sequence." },
+      unscramble:{ title:"Unscramble the word", desc:"Build the right word.", instructions:"Tap the letters in the right order to build the word shown." },
+      counting:{ title:"Count and add", desc:"Count the pictures.", instructions:"Count how many pictures there are and choose the correct number." }
+    }
+  }
+};
+
+const VOCAB = [
+  {es:"gato", en:"cat", emoji:"🐱"},
+  {es:"perro", en:"dog", emoji:"🐶"},
+  {es:"sol", en:"sun", emoji:"☀️"},
+  {es:"luna", en:"moon", emoji:"🌙"},
+  {es:"pez", en:"fish", emoji:"🐟"},
+  {es:"flor", en:"flower", emoji:"🌸"},
+  {es:"casa", en:"house", emoji:"🏠"},
+  {es:"coche", en:"car", emoji:"🚗"},
+  {es:"pelota", en:"ball", emoji:"⚽"},
+  {es:"manzana", en:"apple", emoji:"🍎"},
+  {es:"estrella", en:"star", emoji:"⭐"},
+  {es:"arbol", en:"tree", emoji:"🌳"},
+  {es:"libro", en:"book", emoji:"📖"},
+  {es:"pajaro", en:"bird", emoji:"🐦"},
+  {es:"globo", en:"balloon", emoji:"🎈"},
+  {es:"tren", en:"train", emoji:"🚂"},
+  {es:"helado", en:"ice cream", emoji:"🍦"},
+  {es:"oso", en:"bear", emoji:"🐻"}
+];
+
+const DRAWINGS = [
+  {id:"sun", es:"sol", en:"sun", svg:`<circle cx="60" cy="60" r="22" fill="var(--sol)" stroke="var(--tinta)" stroke-width="4"/>${[0,45,90,135,180,225,270,315].map(a=>`<line x1="${60+Math.cos(a*Math.PI/180)*32}" y1="${60+Math.sin(a*Math.PI/180)*32}" x2="${60+Math.cos(a*Math.PI/180)*44}" y2="${60+Math.sin(a*Math.PI/180)*44}" stroke="var(--tinta)" stroke-width="4" stroke-linecap="round"/>`).join("")}`},
+  {id:"house", es:"casa", en:"house", svg:`<polygon points="60,18 100,50 20,50" fill="var(--fresa)" stroke="var(--tinta)" stroke-width="4"/><rect x="26" y="50" width="68" height="48" fill="var(--sol)" stroke="var(--tinta)" stroke-width="4"/><rect x="52" y="70" width="16" height="28" fill="var(--tinta)"/>`},
+  {id:"fish", es:"pez", en:"fish", svg:`<ellipse cx="55" cy="60" rx="34" ry="20" fill="var(--cielo)" stroke="var(--tinta)" stroke-width="4"/><polygon points="89,60 108,45 108,75" fill="var(--cielo-d)" stroke="var(--tinta)" stroke-width="4"/><circle cx="38" cy="55" r="4" fill="var(--tinta)"/>`},
+  {id:"star", es:"estrella", en:"star", svg:`<polygon points="60,15 71,45 103,45 77,64 87,95 60,76 33,95 43,64 17,45 49,45" fill="var(--sol)" stroke="var(--tinta)" stroke-width="4" stroke-linejoin="round"/>`},
+  {id:"umbrella", es:"paraguas", en:"umbrella", svg:`<path d="M15 62 A45 45 0 0 1 105 62 Z" fill="var(--uva)" stroke="var(--tinta)" stroke-width="4" stroke-linejoin="round"/><line x1="60" y1="62" x2="60" y2="102" stroke="var(--tinta)" stroke-width="4"/><path d="M60 102 q0 10 -10 10" fill="none" stroke="var(--tinta)" stroke-width="4" stroke-linecap="round"/>`},
+  {id:"boat", es:"barco", en:"boat", svg:`<polygon points="25,75 95,75 82,95 38,95" fill="var(--fresa)" stroke="var(--tinta)" stroke-width="4"/><line x1="60" y1="75" x2="60" y2="25" stroke="var(--tinta)" stroke-width="4"/><polygon points="60,28 60,70 95,70" fill="var(--sol)" stroke="var(--tinta)" stroke-width="3"/>`},
+  {id:"heart", es:"corazon", en:"heart", svg:`<path d="M60 96 C10 62 20 20 45 20 C55 20 60 30 60 30 C60 30 65 20 75 20 C100 20 110 62 60 96Z" fill="var(--fresa)" stroke="var(--tinta)" stroke-width="4" stroke-linejoin="round"/>`},
+  {id:"duck", es:"pato", en:"duck", svg:`<ellipse cx="55" cy="72" rx="30" ry="22" fill="var(--sol)" stroke="var(--tinta)" stroke-width="4"/><circle cx="70" cy="42" r="18" fill="var(--sol)" stroke="var(--tinta)" stroke-width="4"/><polygon points="86,42 104,38 104,48" fill="var(--fresa)" stroke="var(--tinta)" stroke-width="3"/><circle cx="75" cy="37" r="3" fill="var(--tinta)"/>`}
+];
+
+const GAME_LIST = [
+  {id:"hangman", color:"fresa", icon:"🔤"},
+  {id:"memory", color:"cielo", icon:"🧠"},
+  {id:"matchword", color:"sol", icon:"🧩"},
+  {id:"firstletter", color:"menta", icon:"🔡"},
+  {id:"sums", color:"uva", icon:"➕"},
+  {id:"subtract", color:"fresa", icon:"➖"},
+  {id:"multiply", color:"cielo", icon:"✖️"},
+  {id:"rain", color:"sol", icon:"🌧️"},
+  {id:"drawing", color:"menta", icon:"🔍"},
+  {id:"alphabet", color:"uva", icon:"🔠"},
+  {id:"unscramble", color:"fresa", icon:"🔀"},
+  {id:"counting", color:"cielo", icon:"🔢"}
+];
+
+/* ---------- helpers ---------- */
+const $ = (sel, root=document)=>root.querySelector(sel);
+const $$ = (sel, root=document)=>Array.from(root.querySelectorAll(sel));
+function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=randInt(0,i); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function pickN(arr,n){ return shuffle(arr).slice(0,n); }
+function pick(arr){ return arr[randInt(0,arr.length-1)]; }
+function t(key){ return I18N[state.lang][key]; }
+function gt(gameId,key){ return I18N[state.lang].games[gameId][key]; }
+
+/* ---------- state ---------- */
+const state = { lang:"es", currentGame:null, score:0, cleanup:null };
+
+function setLang(lang){
+  state.lang = lang;
+  document.documentElement.setAttribute("lang", lang);
+  document.documentElement.setAttribute("data-lang", lang);
+  $("#lang-es").classList.toggle("active", lang==="es");
+  $("#lang-en").classList.toggle("active", lang==="en");
+  applyStaticTexts();
+  renderHome();
+  if(state.currentGame){ openGame(state.currentGame); }
+}
+
+function applyStaticTexts(){
+  $$("[data-i18n]").forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  $("#score-value").textContent = state.score;
+}
+
+/* ---------- mascot (fox) ---------- */
+function mascotSVG(mood="idle", extraClass=""){
+  return `
+  <svg viewBox="0 0 140 140" data-mood="${mood}" class="${extraClass}" aria-hidden="true">
+    <ellipse cx="70" cy="118" rx="34" ry="8" fill="rgba(43,34,80,0.10)"/>
+    <polygon points="40,45 55,10 68,48" fill="var(--fresa)"/>
+    <polygon points="100,45 85,10 72,48" fill="var(--fresa)"/>
+    <polygon points="46,42 55,20 62,46" fill="#FFE3D6"/>
+    <polygon points="94,42 85,20 78,46" fill="#FFE3D6"/>
+    <ellipse cx="70" cy="75" rx="46" ry="40" fill="var(--fresa)"/>
+    <ellipse cx="70" cy="92" rx="26" ry="20" fill="#FFF3E9"/>
+    <ellipse cx="52" cy="68" rx="7" ry="9" fill="#2B2250" class="blink-eye"/>
+    <ellipse cx="88" cy="68" rx="7" ry="9" fill="#2B2250" class="blink-eye"/>
+    <ellipse cx="70" cy="84" rx="6" ry="5" fill="#2B2250"/>
+    <path class="mouth-idle" d="M56 92 Q70 100 84 92" stroke="#2B2250" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path class="mouth-happy" d="M50 90 Q70 112 90 90" stroke="#2B2250" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path class="mouth-sad" d="M56 98 Q70 88 84 98" stroke="#2B2250" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="42" cy="82" rx="7" ry="5" fill="#FF9E9E" opacity="0.8"/>
+    <ellipse cx="98" cy="82" rx="7" ry="5" fill="#FF9E9E" opacity="0.8"/>
+  </svg>`;
+}
+
+function renderMascots(){
+  $("#hero-mascot-slot").innerHTML = mascotSVG("idle","mascot-bounce");
+  $("#feedback-mascot-slot").innerHTML = mascotSVG("idle");
+}
+
+/* ---------- confetti ---------- */
+function launchConfetti(container){
+  const colors = ["var(--fresa)","var(--sol)","var(--menta)","var(--uva)","var(--cielo)"];
+  for(let i=0;i<18;i++){
+    const p = document.createElement("div");
+    p.className = "confetti-piece";
+    p.style.left = randInt(5,95)+"%";
+    p.style.background = colors[randInt(0,colors.length-1)];
+    p.style.animationDelay = (Math.random()*0.3)+"s";
+    p.style.transform = `rotate(${randInt(0,360)}deg)`;
+    container.appendChild(p);
+    setTimeout(()=>p.remove(), 1800);
+  }
+}
+
+/* ---------- home render ---------- */
+function renderHome(){
+  const grid = $("#cards-grid");
+  grid.innerHTML = "";
+  GAME_LIST.forEach(g=>{
+    const card = document.createElement("button");
+    card.className = "game-card";
+    card.style.setProperty("--accent", `var(--${g.color})`);
+    card.style.setProperty("--accent-d", `var(--${g.color}-d, var(--${g.color}))`);
+    card.innerHTML = `
+      <div class="card-icon">${g.icon}</div>
+      <div class="card-title">${gt(g.id,"title")}</div>
+      <div class="card-desc">${gt(g.id,"desc")}</div>
+      <div class="card-play">${t("play")} →</div>
+    `;
+    card.onclick = ()=> openGame(g.id);
+    grid.appendChild(card);
+  });
+}
+
+/* ---------- navigation ---------- */
+function openGame(id){
+  if(state.cleanup){ state.cleanup(); state.cleanup=null; }
+  state.currentGame = id;
+  $("#home").hidden = true;
+  $("#game-screen").hidden = false;
+  $("#game-title").textContent = gt(id,"title");
+  $("#game-instructions").textContent = gt(id,"instructions");
+  hideFeedback();
+  window.scrollTo({top:0, behavior:"instant"});
+  GAME_ENGINES[id]();
+}
+
+function closeGame(){
+  if(state.cleanup){ state.cleanup(); state.cleanup=null; }
+  state.currentGame = null;
+  $("#game-screen").hidden = true;
+  $("#home").hidden = false;
+}
+
+function updateScore(delta){
+  state.score += delta;
+  if(state.score<0) state.score=0;
+  $("#score-value").textContent = state.score;
+}
+
+function renderDots(total, doneCount){
+  const el = $("#progress-dots");
+  el.innerHTML = "";
+  for(let i=0;i<total;i++){
+    const d = document.createElement("span");
+    if(i<doneCount) d.className="done"; else if(i===doneCount) d.className="current";
+    el.appendChild(d);
+  }
+}
+
+/* ---------- feedback overlay ---------- */
+function hideFeedback(){
+  $("#feedback-overlay").classList.remove("show");
+}
+
+function showSessionComplete(){
+  const overlay = $("#feedback-overlay");
+  $("#feedback-mascot-slot").innerHTML = mascotSVG("happy","mascot-jump");
+  $("#feedback-title").textContent = t("sessionDoneTitle");
+  $("#feedback-text").textContent = t("sessionDoneText").replace("{score}", state.score);
+  $("#feedback-actions").innerHTML = `
+    <button class="primary-btn" id="fb-again">${t("playAgain")}</button>
+    <button class="secondary-btn" id="fb-menu">${t("backToMenu")}</button>
+  `;
+  overlay.classList.add("show");
+  launchConfetti($("#feedback-card"));
+  $("#fb-again").onclick = ()=>{ hideFeedback(); openGame(state.currentGame); };
+  $("#fb-menu").onclick = ()=>{ hideFeedback(); closeGame(); };
+}
+
+/* =========================================================
+   GENERIC ROUND / QUIZ ENGINE
+   used by: matchword, firstletter, sums, subtract, multiply,
+            drawing, alphabet, counting
+   ========================================================= */
+function runQuizGame(totalRounds, generateRound){
+  let round = 0;
+  renderDots(totalRounds, 0);
+  function nextRound(){
+    if(round >= totalRounds){ showSessionComplete(); return; }
+    renderDots(totalRounds, round);
+    const q = generateRound();
+    const area = $("#game-area");
+    area.innerHTML = `<div class="quiz-prompt">${q.promptHTML}</div><div class="quiz-options" id="quiz-options"></div>`;
+    const optsEl = $("#quiz-options");
+    q.options.forEach((opt,i)=>{
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.innerHTML = opt.label;
+      btn.dataset.correct = opt.correct ? "1" : "0";
+      btn.onclick = ()=> handleAnswer(opt.correct, btn, optsEl);
+      optsEl.appendChild(btn);
+    });
+  }
+  function handleAnswer(correct, btnEl, optsEl){
+    const allBtns = $$(".option-btn", optsEl);
+    allBtns.forEach(b=>b.disabled=true);
+    if(correct){
+      btnEl.classList.add("correct");
+      updateScore(1);
+    } else {
+      btnEl.classList.add("incorrect");
+      const correctBtn = allBtns.find(b=>b.dataset.correct==="1");
+      if(correctBtn) correctBtn.classList.add("correct");
+    }
+    setTimeout(()=>{ round++; nextRound(); }, 1100);
+  }
+  nextRound();
+}
+
+/* ---------- SUMS / SUBTRACT / MULTIPLY ---------- */
+function mathQuiz(op){
+  return function(){
+    runQuizGame(8, ()=>{
+      let a,b,answer,sign;
+      if(op==="+"){ a=randInt(1,9); b=randInt(1,9); answer=a+b; sign="+"; }
+      else if(op==="-"){ a=randInt(2,10); b=randInt(1,a); answer=a-b; sign="−"; }
+      else { a=randInt(1,5); b=randInt(1,5); answer=a*b; sign="×"; }
+      const options = new Set([answer]);
+      while(options.size<4){ options.add(Math.max(0, answer + randInt(-4,4))); }
+      const opts = shuffle(Array.from(options)).map(v=>({label:String(v), correct:v===answer}));
+      return { promptHTML:`${a} ${sign} ${b} = ?`, options: opts };
+    });
+  };
+}
+
+/* ---------- MATCH WORD (image -> word) ---------- */
+function matchWordGame(){
+  runQuizGame(8, ()=>{
+    const correctItem = pick(VOCAB);
+    const word = correctItem[state.lang];
+    const distractors = pickN(VOCAB.filter(v=>v!==correctItem), 2).map(v=>v[state.lang]);
+    const opts = shuffle([word, ...distractors]).map(w=>({label:w, correct:w===word}));
+    return { promptHTML:`<span class="big-emoji">${correctItem.emoji}</span>`, options: opts };
+  });
+}
+
+/* ---------- FIRST LETTER ---------- */
+function firstLetterGame(){
+  runQuizGame(8, ()=>{
+    const item = pick(VOCAB);
+    const word = item[state.lang];
+    const correctLetter = word[0].toUpperCase();
+    const letters = new Set([correctLetter]);
+    while(letters.size<4){ letters.add(String.fromCharCode(randInt(65,90))); }
+    const opts = shuffle(Array.from(letters)).map(l=>({label:l, correct:l===correctLetter}));
+    return { promptHTML:`<span class="big-emoji">${item.emoji}</span>`, options: opts };
+  });
+}
+
+/* ---------- GUESS THE DRAWING ---------- */
+function drawingGame(){
+  runQuizGame(8, ()=>{
+    const item = pick(DRAWINGS);
+    const word = item[state.lang];
+    const distractors = pickN(DRAWINGS.filter(d=>d!==item), 2).map(d=>d[state.lang]);
+    const opts = shuffle([word, ...distractors]).map(w=>({label:w, correct:w===word}));
+    return {
+      promptHTML:`<svg viewBox="0 0 120 120" style="width:140px;height:140px;display:block;margin:0 auto;">${item.svg}</svg>`,
+      options: opts
+    };
+  });
+}
+
+/* ---------- ALPHABET (missing letter) ---------- */
+function alphabetGame(){
+  const AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  runQuizGame(8, ()=>{
+    const start = randInt(0, AZ.length-5);
+    const seq = AZ.slice(start, start+5).split("");
+    const missingIdx = randInt(1,3);
+    const correctLetter = seq[missingIdx];
+    const shown = seq.map((l,i)=> i===missingIdx ? "_" : l).join(" · ");
+    const letters = new Set([correctLetter]);
+    while(letters.size<4){ letters.add(AZ[randInt(0,25)]); }
+    const opts = shuffle(Array.from(letters)).map(l=>({label:l, correct:l===correctLetter}));
+    return { promptHTML:`<span style="letter-spacing:6px;">${shown}</span>`, options: opts };
+  });
+}
+
+/* ---------- COUNTING ---------- */
+function countingGame(){
+  runQuizGame(8, ()=>{
+    const item = pick(VOCAB);
+    const count = randInt(2,9);
+    const options = new Set([count]);
+    while(options.size<4){ options.add(Math.max(1, count + randInt(-3,3))); }
+    const opts = shuffle(Array.from(options)).map(n=>({label:String(n), correct:n===count}));
+    const row = Array(count).fill(item.emoji).join(" ");
+    return { promptHTML:`<div style="font-size:30px; line-height:1.6; max-width:400px; margin:0 auto;">${row}</div>`, options: opts };
+  });
+}
+
+/* =========================================================
+   HANGMAN
+   ========================================================= */
+function hangmanGame(){
+  const TOTAL_WORDS = 5;
+  let wordIndex = 0;
+  let word, guessed, wrong;
+  const PARTS = ["head","body","armL","armR","legL","legR"];
+
+  function gallowsSVG(){
+    return `
+    <svg class="hangman-svg" viewBox="0 0 120 140" aria-hidden="true">
+      <line x1="10" y1="130" x2="90" y2="130" stroke="var(--tinta)" stroke-width="5" stroke-linecap="round"/>
+      <line x1="30" y1="130" x2="30" y2="15" stroke="var(--tinta)" stroke-width="5" stroke-linecap="round"/>
+      <line x1="30" y1="15" x2="80" y2="15" stroke="var(--tinta)" stroke-width="5" stroke-linecap="round"/>
+      <line x1="80" y1="15" x2="80" y2="30" stroke="var(--tinta)" stroke-width="5" stroke-linecap="round"/>
+      <circle id="p-head" cx="80" cy="42" r="12" fill="none" stroke="var(--fresa)" stroke-width="5" style="display:none"/>
+      <line id="p-body" x1="80" y1="54" x2="80" y2="90" stroke="var(--fresa)" stroke-width="5" stroke-linecap="round" style="display:none"/>
+      <line id="p-armL" x1="80" y1="62" x2="64" y2="80" stroke="var(--fresa)" stroke-width="5" stroke-linecap="round" style="display:none"/>
+      <line id="p-armR" x1="80" y1="62" x2="96" y2="80" stroke="var(--fresa)" stroke-width="5" stroke-linecap="round" style="display:none"/>
+      <line id="p-legL" x1="80" y1="90" x2="66" y2="115" stroke="var(--fresa)" stroke-width="5" stroke-linecap="round" style="display:none"/>
+      <line id="p-legR" x1="80" y1="90" x2="94" y2="115" stroke="var(--fresa)" stroke-width="5" stroke-linecap="round" style="display:none"/>
+    </svg>`;
+  }
+
+  function newWord(){
+    const item = pick(VOCAB);
+    word = item[state.lang].toUpperCase();
+    guessed = new Set();
+    wrong = 0;
+    renderDots(TOTAL_WORDS, wordIndex);
+    render(item.emoji);
+  }
+
+  function render(hintEmoji){
+    const area = $("#game-area");
+    area.innerHTML = `
+      <div class="hangman-wrap">
+        ${gallowsSVG()}
+        <div>
+          <div class="hangman-hint">${hintEmoji}</div>
+          <div class="hangman-word" id="hangman-word"></div>
+        </div>
+      </div>
+      <div class="keyboard" id="hangman-keyboard"></div>
+    `;
+    drawWord();
+    const kb = $("#hangman-keyboard");
+    for(let i=65;i<=90;i++){
+      const letter = String.fromCharCode(i);
+      const btn = document.createElement("button");
+      btn.className = "key-btn";
+      btn.textContent = letter;
+      btn.onclick = ()=> guessLetter(letter, btn);
+      kb.appendChild(btn);
+    }
+  }
+
+  function drawWord(){
+    const el = $("#hangman-word");
+    el.innerHTML = word.split("").map(ch=>`<span class="slot">${guessed.has(ch)?ch:""}</span>`).join("");
+  }
+
+  function guessLetter(letter, btn){
+    btn.disabled = true;
+    if(word.includes(letter)){
+      guessed.add(letter);
+      btn.classList.add("right");
+      drawWord();
+      updateScore(1);
+      if(word.split("").every(ch=>guessed.has(ch))){
+        endWord(true);
+      }
+    } else {
+      wrong++;
+      btn.classList.add("wrong");
+      const part = PARTS[wrong-1];
+      if(part){ const p = $("#p-"+part); if(p) p.style.display="inline"; }
+      if(wrong>=PARTS.length){
+        endWord(false);
+      }
+    }
+  }
+
+  function endWord(win){
+    $$(".key-btn", $("#hangman-keyboard")).forEach(b=>b.disabled=true);
+    wordIndex++;
+    setTimeout(()=>{
+      if(wordIndex>=TOTAL_WORDS){ showSessionComplete(); }
+      else { newWord(); }
+    }, 1200);
+  }
+
+  newWord();
+}
+
+/* =========================================================
+   MEMORY
+   ========================================================= */
+function memoryGame(){
+  const items = pickN(VOCAB, 6);
+  const deck = shuffle([...items, ...items].map((it,i)=>({key:it.emoji, id:i})));
+  let flipped = [];
+  let matchedCount = 0;
+  let lock = false;
+
+  const area = $("#game-area");
+  area.innerHTML = `<div class="memory-grid" id="memory-grid"></div>`;
+  const grid = $("#memory-grid");
+  renderDots(items.length, 0);
+
+  deck.forEach(card=>{
+    const btn = document.createElement("button");
+    btn.className = "mem-card";
+    btn.innerHTML = `
+      <div class="face front"></div>
+      <div class="face back">${card.key}</div>
+    `;
+    btn.onclick = ()=> flip(btn, card);
+    grid.appendChild(btn);
+  });
+
+  function flip(btn, card){
+    if(lock || btn.classList.contains("flipped") || btn.classList.contains("matched")) return;
+    btn.classList.add("flipped");
+    flipped.push({btn, card});
+    if(flipped.length===2){
+      lock = true;
+      const [a,b] = flipped;
+      if(a.card.key === b.card.key){
+        a.btn.classList.add("matched");
+        b.btn.classList.add("matched");
+        matchedCount++;
+        updateScore(2);
+        renderDots(items.length, matchedCount);
+        flipped = [];
+        lock = false;
+        if(matchedCount === items.length){
+          setTimeout(showSessionComplete, 500);
+        }
+      } else {
+        setTimeout(()=>{
+          a.btn.classList.remove("flipped");
+          b.btn.classList.remove("flipped");
+          flipped = [];
+          lock = false;
+        }, 800);
+      }
+    }
+  }
+}
+
+/* =========================================================
+   LETTER RAIN
+   ========================================================= */
+function letterRainGame(){
+  const area = $("#game-area");
+  area.innerHTML = `
+    <div class="rain-field" id="rain-field">
+      <div class="rain-target" id="rain-target"></div>
+      <div class="rain-timer" id="rain-timer">30s</div>
+      <div class="rain-caught" id="rain-caught">0 / 10</div>
+    </div>
+  `;
+  const field = $("#rain-field");
+  let target = String.fromCharCode(randInt(65,90));
+  $("#rain-target").textContent = (state.lang==="es" ? "Atrapa: " : "Catch: ") + target;
+  let caught = 0;
+  const GOAL = 10;
+  let timeLeft = 30;
+  renderDots(GOAL, 0);
+
+  const spawnInterval = setInterval(spawnLetter, 750);
+  const timerInterval = setInterval(()=>{
+    timeLeft--;
+    $("#rain-timer").textContent = timeLeft+"s";
+    if(timeLeft<=0){ endGame(); }
+  }, 1000);
+
+  function spawnLetter(){
+    const isTarget = Math.random() < 0.35;
+    const letter = isTarget ? target : String.fromCharCode(randInt(65,90));
+    const el = document.createElement("button");
+    el.className = "rain-letter";
+    el.textContent = letter;
+    const fieldWidth = field.clientWidth || 300;
+    el.style.left = randInt(6, Math.max(6, fieldWidth-56)) + "px";
+    const duration = 3.2 + Math.random()*1.6;
+    el.style.animationDuration = duration + "s";
+    el.onclick = ()=>{
+      if(letter === target){
+        caught++;
+        updateScore(1);
+        el.remove();
+        renderDots(GOAL, Math.min(caught,GOAL));
+        $("#rain-caught").textContent = caught+" / "+GOAL;
+        if(caught>=GOAL){ endGame(); return; }
+        if(caught % 3 === 0){
+          target = String.fromCharCode(randInt(65,90));
+          $("#rain-target").textContent = (state.lang==="es" ? "Atrapa: " : "Catch: ") + target;
+        }
+      } else {
+        el.remove();
+      }
+    };
+    el.addEventListener("animationend", ()=> el.remove());
+    field.appendChild(el);
+  }
+
+  function endGame(){
+    clearInterval(spawnInterval);
+    clearInterval(timerInterval);
+    $$(".rain-letter", field).forEach(l=>l.remove());
+    showSessionComplete();
+  }
+
+  state.cleanup = ()=>{
+    clearInterval(spawnInterval);
+    clearInterval(timerInterval);
+  };
+}
+
+/* =========================================================
+   UNSCRAMBLE THE WORD
+   ========================================================= */
+function unscrambleGame(){
+  const TOTAL = 6;
+  let round = 0;
+
+  function nextWord(){
+    if(round>=TOTAL){ showSessionComplete(); return; }
+    renderDots(TOTAL, round);
+    const item = pick(VOCAB);
+    const word = item[state.lang].toUpperCase();
+    let letters = word.split("").map((ch,i)=>({ch, id:i, used:false}));
+    letters = shuffle(letters);
+    // avoid already-in-order scramble
+    if(letters.map(l=>l.ch).join("") === word && word.length>1){
+      letters = shuffle(letters);
+    }
+    let answer = [];
+
+    const area = $("#game-area");
+    area.innerHTML = `
+      <div class="unscramble-hint">${item.emoji}</div>
+      <div class="unscramble-slot" id="unscramble-slot"></div>
+      <div class="unscramble-tiles" id="unscramble-tiles"></div>
+      <div class="unscramble-actions"><button class="ghost-btn" id="unscramble-clear">${t("clear")}</button></div>
+    `;
+    const slotEl = $("#unscramble-slot");
+    const tilesEl = $("#unscramble-tiles");
+
+    function drawSlot(){
+      slotEl.innerHTML = "";
+      for(let i=0;i<word.length;i++){
+        const s = document.createElement("div");
+        s.className = "slot-tile";
+        s.textContent = answer[i] ? answer[i].ch : "";
+        slotEl.appendChild(s);
+      }
+    }
+    drawSlot();
+
+    letters.forEach(l=>{
+      const btn = document.createElement("button");
+      btn.className = "letter-tile";
+      btn.textContent = l.ch;
+      btn.onclick = ()=>{
+        if(l.used || answer.length>=word.length) return;
+        l.used = true;
+        btn.disabled = true;
+        answer.push(l);
+        drawSlot();
+        if(answer.length === word.length){
+          checkAnswer();
+        }
+      };
+      tilesEl.appendChild(btn);
+    });
+
+    $("#unscramble-clear").onclick = ()=>{
+      answer = [];
+      letters.forEach(l=>l.used=false);
+      $$(".letter-tile", tilesEl).forEach(b=>b.disabled=false);
+      drawSlot();
+    };
+
+    function checkAnswer(){
+      const built = answer.map(l=>l.ch).join("");
+      $$(".letter-tile", tilesEl).forEach(b=>b.disabled=true);
+      if(built === word){
+        updateScore(2);
+        round++;
+        setTimeout(nextWord, 1000);
+      } else {
+        slotEl.classList.add("shake");
+        setTimeout(()=>{
+          answer = [];
+          letters.forEach(l=>l.used=false);
+          $$(".letter-tile", tilesEl).forEach(b=>b.disabled=false);
+          drawSlot();
+        }, 700);
+      }
+    }
+  }
+
+  nextWord();
+}
+
+/* ---------- engine registry ---------- */
+const GAME_ENGINES = {
+  hangman: hangmanGame,
+  memory: memoryGame,
+  matchword: matchWordGame,
+  firstletter: firstLetterGame,
+  sums: mathQuiz("+"),
+  subtract: mathQuiz("-"),
+  multiply: mathQuiz("*"),
+  rain: letterRainGame,
+  drawing: drawingGame,
+  alphabet: alphabetGame,
+  unscramble: unscrambleGame,
+  counting: countingGame
+};
+
+/* ---------- init ---------- */
+applyStaticTexts();
+renderMascots();
+renderHome();
+</script>
+</body>
+</html>
